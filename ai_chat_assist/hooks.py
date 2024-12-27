@@ -83,7 +83,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "ai_chat_assist.install.before_install"
-after_install = "ai_chat_assist.scripts.install_node_app"
+after_install = "ai_chat_assist.scripts.after_install.install_node_app"
 
 # Uninstallation
 # ------------

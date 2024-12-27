@@ -9,7 +9,7 @@ def install_node_app():
     node_app_git_url = "https://github.com/prabhu797/node_file_backend.git"
     
     # Clone the Node.js app repo if it doesn't exist
-    node_app_path = os.path.join(bench_path, "node_apps", "yournodeapp")  # Example path
+    node_app_path = os.path.join(bench_path, "node_file_backend")  # Example path
     if not os.path.exists(node_app_path):
         subprocess.run(["git", "clone", node_app_git_url, node_app_path], check=True)
     
