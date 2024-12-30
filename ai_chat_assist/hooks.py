@@ -88,7 +88,7 @@ after_install = "ai_chat_assist.scripts.after_install.install_node_app"
 # Uninstallation
 # ------------
 
-# before_uninstall = "ai_chat_assist.uninstall.before_uninstall"
+before_uninstall = "ai_chat_assist.scripts.before_uninstall.delete_supervisor_file_for_node_app"
 # after_uninstall = "ai_chat_assist.uninstall.after_uninstall"
 
 # Integration Setup
