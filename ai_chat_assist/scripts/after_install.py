@@ -6,7 +6,7 @@ def install_node_app():
     bench_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     # Git URL of the Node.js app (replace with your actual Git repo URL)
-    node_app_git_url = "https://github.com/prabhu797/node_file_backend.git"
+    node_app_git_url = "https://github.com/noveloffice-in/node_file_backend.git"
     
     # Clone the Node.js app repo if it doesn't exist
     node_app_path = os.path.join(bench_path, "node_file_backend")  # Example path
