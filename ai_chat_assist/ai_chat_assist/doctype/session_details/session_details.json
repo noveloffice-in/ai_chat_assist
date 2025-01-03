@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:session_id",
+ "creation": "2025-01-03 16:06:09.644456",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "general_details_tab",
+  "session_id",
+  "column_break_dujw",
+  "resolved",
+  "section_break_khmi",
+  "messages",
+  "agent_details_tab",
+  "current_user",
+  "column_break_ixve",
+  "time_taken_for_first_response",
+  "section_break_qhjm",
+  "multi_assign_agent_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "General Details"
+  },
+  {
+   "fieldname": "agent_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Agent Details"
+  },
+  {
+   "fieldname": "current_user",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Current User"
+  },
+  {
+   "fieldname": "column_break_ixve",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "time_taken_for_first_response",
+   "fieldtype": "Data",
+   "label": "Time taken for First Response"
+  },
+  {
+   "fieldname": "section_break_qhjm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "multi_assign_agent_details",
+   "fieldtype": "Table",
+   "label": "Multi Assign Agent Details",
+   "options": "Multi Assign Agent Details"
+  },
+  {
+   "fieldname": "session_id",
+   "fieldtype": "Data",
+   "label": "Session ID",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_dujw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "resolved",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Resolved"
+  },
+  {
+   "fieldname": "section_break_khmi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "messages",
+   "fieldtype": "Table",
+   "label": "Messages",
+   "options": "Messages"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-03 16:27:56.668749",
+ "modified_by": "Administrator",
+ "module": "AI Chat Assist",
+ "name": "Session Details",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

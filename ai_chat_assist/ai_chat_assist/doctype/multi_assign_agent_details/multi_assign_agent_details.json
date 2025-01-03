@@ -1,0 +1,41 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-03 15:52:36.038817",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "column_break_zbey",
+  "took_control_on_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Data",
+   "label": "User"
+  },
+  {
+   "fieldname": "column_break_zbey",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "took_control_on_at",
+   "fieldtype": "Data",
+   "label": "Took Control on/at"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-03 15:54:20.951282",
+ "modified_by": "Administrator",
+ "module": "AI Chat Assist",
+ "name": "Multi Assign Agent Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
