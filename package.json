@@ -1,0 +1,15 @@
+{
+  "name": "ai_chat_assist",
+  "version": "1.0.0",
+  "description": "AI Chat Assist",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd Supportify && yarn install",
+    "dev": "cd Supportify && yarn dev",
+    "build": "cd Supportify && yarn build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
