@@ -5,18 +5,30 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ChatIcon from '@mui/icons-material/Chat';
+import { useFrappeAuth } from 'frappe-react-sdk';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProfileComponent() {
     const [available, setAvailable] = useState(true);
+
+    const navigate = useNavigate();
+    const { currentUser, logout } = useFrappeAuth();
+
+    const handleLogout = ()=>{
+        logout();
+        setTimeout(() => {
+            navigate('/login');
+        }, 500);
+    }
 
     return (
         <Box sx={{ width: '100%', maxWidth: 360, margin: '0 auto', pt: 2 , position: 'absolute', backgroundColor: '#f5f5f5', zIndex: 999 }}>
             <Box sx={{ p: 2, textAlign: 'center' }}>
                 <Avatar sx={{ width: 80, height: 80, margin: '0 auto', mb: 2 }} />
-                <Typography variant="h6">Rajkumar</Typography>
+                <Typography variant="h6"> {currentUser? currentUser : "User"} </Typography>
             </Box>
 
-            <List>
+            <List style={{cursor:'pointer'}}>
                 <ListItem>
                     <ListItemIcon><PersonIcon /></ListItemIcon>
                     <ListItemText primary="Available Free" />
@@ -46,7 +58,7 @@ export default function ProfileComponent() {
 
                 <Divider />
 
-                <ListItem button>
+                <ListItem button onClick={handleLogout}>
                     <ListItemIcon><LogoutIcon /></ListItemIcon>
                     <ListItemText primary="Logout" />
                 </ListItem>
