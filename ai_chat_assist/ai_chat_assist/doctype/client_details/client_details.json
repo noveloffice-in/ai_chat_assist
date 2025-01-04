@@ -108,7 +108,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-03 16:30:28.307413",
+ "modified": "2025-01-03 18:36:22.155838",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Client Details",
@@ -125,6 +125,12 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Guest",
    "write": 1
   }
  ],
