@@ -15,12 +15,14 @@
   {
    "fieldname": "user",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "User"
   },
   {
    "default": "Message",
    "fieldname": "message_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Message Type",
    "options": "Message\nAttachment"
   },
@@ -36,13 +38,14 @@
   {
    "fieldname": "message",
    "fieldtype": "Small Text",
+   "in_list_view": 1,
    "label": "Message"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-03 15:51:08.814574",
+ "modified": "2025-01-04 15:03:07.769415",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Messages",
