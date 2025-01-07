@@ -243,4 +243,4 @@ before_uninstall = "ai_chat_assist.scripts.before_uninstall.delete_supervisor_fi
 # }
 
 
-website_route_rules = [{'from_route': '/Supportify/<path:app_path>', 'to_route': 'Supportify'}, {'from_route': '/Supportify/<path:app_path>', 'to_route': 'Supportify'},]
+website_route_rules = [{'from_route': '/supportify/<path:app_path>', 'to_route': 'supportify'}, {'from_route': '/Supportify/<path:app_path>', 'to_route': 'Supportify'}, {'from_route': '/Supportify/<path:app_path>', 'to_route': 'Supportify'},]

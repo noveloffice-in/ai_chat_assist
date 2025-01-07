@@ -8,6 +8,7 @@
  "field_order": [
   "basic_details_section",
   "user",
+  "agent_name",
   "column_break_ddvy",
   "is_available",
   "is_admin"
@@ -45,11 +46,18 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Is Admin"
+  },
+  {
+   "fetch_from": "user.full_name",
+   "fetch_if_empty": 1,
+   "fieldname": "agent_name",
+   "fieldtype": "Data",
+   "label": "Agent Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-03 16:31:07.583303",
+ "modified": "2025-01-07 16:22:04.511835",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Agent Profile",
