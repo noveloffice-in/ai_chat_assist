@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Paper, Typography, Box, Alert } from '@mui/material';
 import { loginStart, loginSuccess, loginFailure } from '../store/slices/authSlice';
-import { useFrappeAuth } from 'frappe-react-sdk';
+import { useFrappeAuth, useFrappeGetDoc } from 'frappe-react-sdk';
 
 // Dummy user data
 const DUMMY_USERS = [
     {
-        email: 'admin@example.com',
-        password: 'admin123',
+        email: 'rajkumar.m@noveloffice.in',
+        password: 'Novel@123',
         id: 1,
         name: 'Admin User'
     },
