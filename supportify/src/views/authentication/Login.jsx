@@ -57,7 +57,7 @@ const Login = () => {
         >
             <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: '100%', mx: 2 }}>
                 <Typography variant="h5" align="center" gutterBottom>
-                    Smartsupp Clone Login
+                    Supportify
                 </Typography>
 
                 <form onSubmit={handleSubmit}>
