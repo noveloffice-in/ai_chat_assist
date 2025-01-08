@@ -5,6 +5,8 @@ import Details from './Details';
 import { Box, Grid } from '@mui/material';
 
 const MessagesLayout = () => {
+  // console.log(socket);
+  
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
       {/* Sidebar: SessionList */}

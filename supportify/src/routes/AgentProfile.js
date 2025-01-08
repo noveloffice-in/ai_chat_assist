@@ -44,7 +44,6 @@ export default function AgentProfile(props) {
             call({"user" : currentUser})
             .then((res)=>{
                 let agent = res.message;
-                console.log(agent);
                 
                 dispatch(setAgentName(agent.agent_name));
                 dispatch(setAgentEmail(agent.user));
