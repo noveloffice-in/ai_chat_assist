@@ -16,6 +16,8 @@ import { IconListCheck, IconMail, IconUser } from '@tabler/icons';
 
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 import { useFrappeAuth } from 'frappe-react-sdk';
+import { useDispatch } from 'react-redux';
+import { resetCurrentSessionState } from '../../../store/slices/CurrentSessionSlice';
 
 const Profile = () => {
 
@@ -32,6 +34,8 @@ const Profile = () => {
     getUserCookie,
   } = useFrappeAuth();
 
+  const dispatch = useDispatch();
+
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
@@ -43,6 +47,8 @@ const Profile = () => {
   const handleLogout = () => {
     logout();
     Cookies.remove(getUserCookie);
+    localStorage.clear();
+    dispatch(resetCurrentSessionState())
     setTimeout(() => {
       navigate("/login");
       //,uncomment this if you want permissions to apply without user refresh
