@@ -15,6 +15,7 @@ import {
 import { combineReducers } from '@reduxjs/toolkit';
 
 import AgentSlice from './slices/AgentSlice';
+import CurrentSessionSlice from './slices//CurrentSessionSlice';
 
 /**
  * Configuration for redux-persist.
@@ -36,6 +37,7 @@ const persistConfig = {
  */
 const reducer = combineReducers({
     agentReducer: AgentSlice,
+    currentSessionReducer: CurrentSessionSlice,
 });
 
 /**

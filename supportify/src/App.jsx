@@ -3,7 +3,6 @@ import { useRoutes } from "react-router-dom";
 import Router from "../src/routes/Router";
 
 import { baselightTheme } from "./theme/DefaultColors";
-import SocketConnection from "./components/shared/SocketConnection";
 
 //Add env file (Example):
 // VITE_FRAPPE_URL="http://localhost:8000"
@@ -17,7 +16,7 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <SocketConnection>{routing}</SocketConnection>
+            {routing}
         </ThemeProvider>
     );
 }

@@ -10,15 +10,15 @@ import { setAgentAvailability } from '../../../store/slices/AgentSlice';
 export default function Available() {
 
     const [available, setAvailable] = useState(false);
-    const agentDetals = useSelector((state) => state.agentReducer);
+    const agentDetails = useSelector((state) => state.agentReducer);
     const dispatch = useDispatch();
 
     const {updateDoc} = useFrappeUpdateDoc();
-    const { data, error } = useFrappeGetDocList("Agent Profile", { filters: [["name", "=", agentDetals.agentEmail]], fields: ["is_available"] })
-    console.log("Data", data);
+    const { data, error } = useFrappeGetDocList("Agent Profile", { filters: [["name", "=", agentDetails.agentEmail]], fields: ["is_available"] })
+
     const updateAvailability = useCallback(
         debounce(async (status) => {
-            updateDoc("Agent Profile", agentDetals.agentEmail, {is_available : status})
+            updateDoc("Agent Profile", agentDetails.agentEmail, {is_available : status})
             .then((res)=>{
                 console.log("res = ", res);
             })
@@ -31,7 +31,7 @@ export default function Available() {
     );
 
     useEffect(() => {
-        let status = data && data[0].is_available === 0 ? false : true;
+        let status = data?.length > 0 && data[0].is_available === 0 ? false : true;
         setAvailable(status);
         dispatch(setAgentAvailability(status));
     }, [data]);
