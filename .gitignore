@@ -8,3 +8,5 @@ __pycache__
 node_file_backend/
 .env.production
 .env.local
+/ai_chat_assist/public
+/ai_chat_assist/www
