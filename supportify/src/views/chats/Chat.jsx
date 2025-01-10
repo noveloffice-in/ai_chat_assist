@@ -67,6 +67,9 @@ const Chat = ({ socketData, socket }) => {
                 },
             ]);
         }
+        if(socketData.username === "Guest" && isResolved) {
+            updateAvailability(false);
+        }
     }, [socketData]);
 
     // Handle sending a message
