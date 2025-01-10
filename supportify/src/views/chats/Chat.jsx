@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Skeleton, useTheme } from "@mui/material";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel } from "@mui/material";
 import { useSelector } from "react-redux";
-import { useFrappeGetDoc } from "frappe-react-sdk";
+import { useFrappeGetDoc, useFrappeUpdateDoc } from "frappe-react-sdk";
+import { debounce } from "lodash";
 
 
 const Chat = ({ socketData, socket }) => {
@@ -12,14 +13,33 @@ const Chat = ({ socketData, socket }) => {
     const agent = useSelector((state) => state.agentReducer);
 
     const [messages, setMessages] = useState([]);
-    const [inputMessage, setInputMessage] = useState(""); // State for message input
+    const [isResolved, setIsResolved] = useState(false);
+    const [inputMessage, setInputMessage] = useState("");
     const { data, error } = useFrappeGetDoc("Session Details", sessionID);
+    const { updateDoc } = useFrappeUpdateDoc();
     const chatEndRef = useRef(null);
     const theme = useTheme();
     const primaryColor = theme.palette.primary.main;
     const grey = theme.palette;
     console.log(grey);
-    
+
+    const updateAvailability = useCallback(
+        debounce(async (status) => {
+            try {
+                if (typeof(status) === 'boolean') setIsResolved(status);
+                await updateDoc("Session Details", sessionID, { "resolved": status });
+                console.log("API successfully updated with status:", status);
+            } catch (err) {
+                console.error("Error updating API with status:", err);
+            }
+        }, 1000),
+        []
+    );
+
+    const handleCheckboxChange = (event) => {
+        const status = event.target.checked; // Get the checkbox state (checked/unchecked)
+        updateAvailability(status); // Trigger debounced function
+    };
 
     // Auto-scroll to the latest message
     useEffect(() => {
@@ -31,6 +51,9 @@ const Chat = ({ socketData, socket }) => {
     useEffect(() => {
         if (data?.messages) {
             setMessages(data.messages);
+            console.log("data", data);
+            let status = data?.resolved ? true : false;
+            setIsResolved(status);
         }
     }, [data]);
 
@@ -90,8 +113,31 @@ const Chat = ({ socketData, socket }) => {
     return (
         <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
             {/* Chat Header */}
-            <Box sx={{ padding: 2, borderBottom: "1px solid #ddd", position: 'sticky', top: 0, backgroundColor: 'white' }}>
+            <Box
+                sx={{
+                    padding: 2,
+                    borderBottom: '1px solid #ddd',
+                    position: 'sticky',
+                    top: 0,
+                    backgroundColor: 'white',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}
+            >
                 <Typography variant="h6">{sessionID}</Typography>
+
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            onChange={handleCheckboxChange}
+                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+                            checked={isResolved}
+                        />
+                    }
+                    label="Resolved"
+                    sx={{ marginLeft: 0 }}
+                />
             </Box>
 
             {/* Chat Messages */}
