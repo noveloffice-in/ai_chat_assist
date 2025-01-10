@@ -13,6 +13,7 @@ const Dashboard = Loadable(lazy(() => import('../views/dashboard/Dashboard')))
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 const Login = Loadable(lazy(() => import('../views/authentication/Login')));
 const MessagesLayout = Loadable(lazy(() => import('../views/chats/MessagesLayout')));
+const SettingsLayout = Loadable(lazy(() => import('../views/settings/SettingsLayout')));
 
 // import LoginPage from 'src/devComponents/login/LoginPage';
 
@@ -24,6 +25,7 @@ const Router = [
       { path: '/', element: <Navigate to="/dashboard" /> },
       { path: '/dashboard', exact: true, element: <AgentProfile Component={Dashboard} /> },
       { path: '/messages', exact: true, element: <Protected Component={MessagesLayout} /> },
+      { path: '/settings', exact: true, element: <Protected Component={SettingsLayout} /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },

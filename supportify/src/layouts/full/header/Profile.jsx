@@ -102,6 +102,9 @@ const Profile = () => {
           },
         }}
       >
+        <MenuItem disabled>
+          <ListItemText>{currentUser}</ListItemText>
+        </MenuItem>
         <MenuItem>
           <ListItemIcon>
             <IconUser width={20} />

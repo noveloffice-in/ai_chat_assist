@@ -6,63 +6,62 @@ const baselightTheme = createTheme({
   direction: 'ltr',
   palette: {
     primary: {
-      main: '#5D87FF',
-      light: '#ECF2FF',
-      dark: '#4570EA',
+      main: '#00796B',  // Teal for primary color
+      light: '#48A999',  // Light teal
+      dark: '#004D40',  // Dark teal for contrast
     },
     secondary: {
-      main: '#49BEFF',
-      light: '#E8F7FF',
-      dark: '#23afdb',
+      main: '#1976D2',  // Blue for secondary elements
+      light: '#63A4FF',  // Light blue for hover or active states
+      dark: '#004BA0',  // Dark blue for buttons or focus areas
     },
     success: {
-      main: '#13DEB9',
-      light: '#E6FFFA',
-      dark: '#02b3a9',
+      main: '#4CAF50',  // Green for success messages
+      light: '#81C784',  // Light green for success hover states
+      dark: '#388E3C',  // Dark green for active success buttons
       contrastText: '#ffffff',
     },
     info: {
-      main: '#539BFF',
-      light: '#EBF3FE',
-      dark: '#1682d4',
+      main: '#2196F3',  // Blue for informational messages
+      light: '#64B5F6',  // Light blue for info hover states
+      dark: '#1976D2',  // Darker blue for info active states
       contrastText: '#ffffff',
     },
     error: {
-      main: '#FA896B',
-      light: '#FDEDE8',
-      dark: '#f3704d',
+      main: '#F44336',  // Red for error messages
+      light: '#EF9A9A',  // Light red for error hover states
+      dark: '#D32F2F',  // Dark red for active error states
       contrastText: '#ffffff',
     },
     warning: {
-      main: '#FFAE1F',
-      light: '#FEF5E5',
-      dark: '#ae8e59',
+      main: '#FF9800',  // Orange for warning messages
+      light: '#FFB74D',  // Light orange for warning hover states
+      dark: '#F57C00',  // Dark orange for active warning states
       contrastText: '#ffffff',
     },
     purple: {
-      A50: '#EBF3FE',
-      A100: '#6610f2',
-      A200: '#557fb9',
+      A50: '#E1BEE7',  // Light purple for backgrounds or accents
+      A100: '#9C27B0',  // Vibrant purple for active states
+      A200: '#7B1FA2',  // Darker purple for contrasting elements
     },
     grey: {
-      100: '#F2F6FA',
-      200: '#EAEFF4',
-      300: '#DFE5EF',
-      400: '#7C8FAC',
-      500: '#5A6A85',
-      600: '#2A3547',
-
+      100: '#F5F5F5',  // Very light grey for backgrounds
+      200: '#EEEEEE',  // Light grey for dividers or borders
+      300: '#E0E0E0',  // Neutral grey for elements like input fields
+      400: '#BDBDBD',  // Grey for disabled text or icons
+      500: '#9E9E9E',  // Regular grey for standard text
+      600: '#757575',  // Dark grey for inactive or disabled elements
     },
     text: {
-      primary: '#2A3547',
-      secondary: '#5A6A85',
+      primary: '#212121',  // Dark grey for primary text (messages)
+      secondary: '#757575',  // Lighter grey for secondary text (timestamps, etc.)
     },
     action: {
-      disabledBackground: 'rgba(73,82,88,0.12)',
-      hoverOpacity: 0.02,
-      hover: '#f6f9fc',
+      disabledBackground: 'rgba(0, 0, 0, 0.12)',  // Grey background for disabled elements
+      hoverOpacity: 0.06,  // Subtle hover opacity for interactive elements
+      hover: '#e0f7fa',  // Light cyan for hover effect
     },
-    divider: '#e5eaef',
+    divider: '#BDBDBD',  // Divider color to separate chat bubbles or UI sections
   },
   typography,
   shadows,
@@ -70,14 +69,12 @@ const baselightTheme = createTheme({
     MuiAlert: {
       styleOverrides: {
         filledSuccess: {
-          backgroundColor: '#4CAF50',
+          backgroundColor: '#4CAF50',  // Green for success alert
           color: '#FFFFFF',
         },
       },
     },
   },
-},
-
-);
+});
 
 export { baselightTheme };

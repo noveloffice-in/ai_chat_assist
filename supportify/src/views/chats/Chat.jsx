@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Skeleton } from "@mui/material";
+import { Box, Typography, TextField, Button, Skeleton, useTheme } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useFrappeGetDoc } from "frappe-react-sdk";
 
@@ -15,6 +15,11 @@ const Chat = ({ socketData, socket }) => {
     const [inputMessage, setInputMessage] = useState(""); // State for message input
     const { data, error } = useFrappeGetDoc("Session Details", sessionID);
     const chatEndRef = useRef(null);
+    const theme = useTheme();
+    const primaryColor = theme.palette.primary.main;
+    const grey = theme.palette;
+    console.log(grey);
+    
 
     // Auto-scroll to the latest message
     useEffect(() => {
@@ -85,7 +90,7 @@ const Chat = ({ socketData, socket }) => {
     return (
         <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
             {/* Chat Header */}
-            <Box sx={{ padding: 2, borderBottom: "1px solid #ddd" }}>
+            <Box sx={{ padding: 2, borderBottom: "1px solid #ddd", position: 'sticky', top: 0, backgroundColor: 'white' }}>
                 <Typography variant="h6">{sessionID}</Typography>
             </Box>
 
@@ -97,6 +102,8 @@ const Chat = ({ socketData, socket }) => {
                     display: "flex",
                     flexDirection: "column",
                     gap: 2,
+                    overflowY: "scroll",
+                    height: '0rem'
                 }}
             >
                 {messages.length === 0 ? (
@@ -115,7 +122,7 @@ const Chat = ({ socketData, socket }) => {
                                 backgroundColor:
                                     message.user === "Guest"
                                         ? "#f0f0f0"
-                                        : "#1976d2",
+                                        : primaryColor,
                                 color:
                                     message.user === "Guest" ? "#000" : "#fff",
                                 padding: 1,
@@ -139,10 +146,8 @@ const Chat = ({ socketData, socket }) => {
                     padding: 2,
                     borderTop: "1px solid #ddd",
                     display: "flex",
-                    position: "absolute",
                     bottom: "0px",
                     gap: 2,
-                    width: "46%",
                 }}
             >
                 <TextField

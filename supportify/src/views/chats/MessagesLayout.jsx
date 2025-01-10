@@ -25,7 +25,7 @@ const MessagesLayout = () => {
     }, []);
 
     return (
-        <Box sx={{ display: "flex", height: "90vh" }}>
+        <Box sx={{ display: "flex", height:'87dvh' }}>
             {/* Sidebar: SessionList */}
             <Box
                 sx={{
@@ -44,8 +44,6 @@ const MessagesLayout = () => {
                     border: "1px solid #ddd",
                     display: "flex",
                     flexDirection: "column",
-                    maxHeight: "85%",
-                    overflowY: "scroll",
                 }}
             >
                 <Chat socketData={socketData} socket={socket} />
