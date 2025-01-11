@@ -1,32 +1,35 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFrappeGetDoc, useFrappeUpdateDoc } from "frappe-react-sdk";
 import { debounce } from "lodash";
-
+import { setSessionID } from "../../store/slices/CurrentSessionSlice"
+import arrowImage from '../../assets/images/products/arrow.png'
 
 const Chat = ({ socketData, socket }) => {
     const sessionID = useSelector(
         (state) => state.currentSessionReducer.sessionID
     );
-
     const agent = useSelector((state) => state.agentReducer);
 
     const [messages, setMessages] = useState([]);
     const [isResolved, setIsResolved] = useState(false);
     const [inputMessage, setInputMessage] = useState("");
+
     const { data, error } = useFrappeGetDoc("Session Details", sessionID);
     const { updateDoc } = useFrappeUpdateDoc();
-    const chatEndRef = useRef(null);
+
     const theme = useTheme();
+    const dispatch = useDispatch();
+    const chatEndRef = useRef(null);
+
     const primaryColor = theme.palette.primary.main;
     const grey = theme.palette;
-    console.log(grey);
 
     const updateAvailability = useCallback(
         debounce(async (status) => {
             try {
-                if (typeof(status) === 'boolean') setIsResolved(status);
+                if (typeof (status) === 'boolean') setIsResolved(status);
                 await updateDoc("Session Details", sessionID, { "resolved": status });
                 console.log("API successfully updated with status:", status);
             } catch (err) {
@@ -49,13 +52,14 @@ const Chat = ({ socketData, socket }) => {
     }, [messages]);
 
     useEffect(() => {
+        if (error) dispatch(setSessionID(""));
         if (data?.messages) {
             setMessages(data.messages);
             console.log("data", data);
             let status = data?.resolved ? true : false;
             setIsResolved(status);
         }
-    }, [data]);
+    }, [data, error]);
 
     useEffect(() => {
         if (socketData.sessionId === sessionID) {
@@ -67,7 +71,7 @@ const Chat = ({ socketData, socket }) => {
                 },
             ]);
         }
-        if(socketData.username === "Guest" && isResolved) {
+        if (socketData.username === "Guest" && isResolved) {
             updateAvailability(false);
         }
     }, [socketData]);
@@ -106,8 +110,12 @@ const Chat = ({ socketData, socket }) => {
                     <Typography variant="h6">Chat</Typography>
                 </Box>
                 <Box sx={{ flexGrow: 1, padding: 2, overflowY: "auto" }}>
-                    <Skeleton variant="text" width="100%" height={30} />
-                    <Skeleton variant="text" width="100%" height={30} />
+                    Ready to chat? Click on a session to begin messaging. <br />
+                    <img src={arrowImage} alt="" style={{
+                        width: '16rem',
+                        height: '14rem',
+                        marginTop: '1rem'
+                    }} />
                 </Box>
             </Box>
         );
