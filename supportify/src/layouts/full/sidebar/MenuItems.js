@@ -1,9 +1,8 @@
 import {
-  IconCopy,
   IconSettings,
   IconHome,
   IconMessages,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 
 import { uniqueId } from 'lodash';
 

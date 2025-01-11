@@ -118,7 +118,7 @@ const Chat = ({ socketData, socket }) => {
             {/* Chat Header */}
             <Box
                 sx={{
-                    padding: 2,
+                    padding: "0.3rem 2rem",
                     borderBottom: '1px solid #ddd',
                     position: 'sticky',
                     top: 0,
@@ -134,7 +134,7 @@ const Chat = ({ socketData, socket }) => {
                     control={
                         <Checkbox
                             onChange={handleCheckboxChange}
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+                            sx={{ '& .MuiSvgIcon-root': { fontSize: 20 } }}
                             checked={isResolved}
                         />
                     }

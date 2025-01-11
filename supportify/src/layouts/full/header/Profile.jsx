@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import Cookies from 'js-cookie';
 
-import { IconListCheck, IconMail, IconUser } from '@tabler/icons';
+import { IconListCheck, IconMail, IconUser } from '@tabler/icons-react';
 
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 import { useFrappeAuth } from 'frappe-react-sdk';

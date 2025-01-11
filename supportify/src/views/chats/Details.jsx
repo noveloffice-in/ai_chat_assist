@@ -10,8 +10,8 @@ const Details = () => {
 
   return (
     <Box>
-      <Box sx={{ padding: 2, borderBottom: '1px solid #ddd' }}>
-        <Typography variant="h6">Visitor Details</Typography>
+      <Box sx={{ padding: "0.9rem 1rem", borderBottom: '1px solid #ddd' }}>
+        <Typography variant="h6">Client Details</Typography>
       </Box>
       <List>
         {details.map((detail, index) => (
