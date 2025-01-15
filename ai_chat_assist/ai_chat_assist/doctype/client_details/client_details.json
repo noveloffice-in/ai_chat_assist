@@ -108,7 +108,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-03 18:36:22.155838",
+ "modified": "2025-01-13 15:17:52.685009",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Client Details",
@@ -134,7 +134,9 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "name1"
 }
