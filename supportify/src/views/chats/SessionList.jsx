@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSessionID } from "../../store/slices/CurrentSessionSlice";
 import { useFrappeGetDocList } from "frappe-react-sdk";
 
-const SessionList = ({ socketData }) => {
+const SessionList = ({ socketData, refreshSessionList }) => {
     const [activeTab, setActiveTab] = useState("open");
     const [subTab, setSubTab] = useState("all");
 
@@ -25,31 +25,12 @@ const SessionList = ({ socketData }) => {
 
     const { data, error, isLoading } = useFrappeGetDocList("Session Details", {
         filters: filters,
-    });
-
+    }, [refreshSessionList, activeTab, subTab]);
 
     useEffect(() => {
         if (data) {
             setSessions(data);
         }
-        //     console.log("SessionList", socketData);
-        //     // Check if the session is already in 'open.all' list
-        //     setSessions((prevSessions) => {
-        //         if (
-        //             socketData.sessionId &&
-        //             !prevSessions.open.all.includes(socketData.sessionId)
-        //         ) {
-        //             // Append new sessionId to the 'open.all' list
-        //             return {
-        //                 ...prevSessions,
-        //                 open: {
-        //                     ...prevSessions.open,
-        //                     all: [...prevSessions.open.all, socketData.sessionId],
-        //                 },
-        //             };
-        //         }
-        //         return prevSessions;
-        //     });
     }, [socketData, data]);
 
     const handleTabChange = (event, newValue) => setActiveTab(newValue);
@@ -87,13 +68,10 @@ const SessionList = ({ socketData }) => {
             {/* Session List */}
             <List>
                 {sessions.length > 0 && sessions.map((session, index) => (
-                    <ListItem button key={index}>
-                        <ListItemText
-                            primary={session.name}
-                            onClick={() => {
-                                handleSessionClick(session.name);
-                            }}
-                        />
+                    <ListItem button key={index} onClick={() => {
+                        handleSessionClick(session.name);
+                    }}>
+                        <ListItemText primary={session.name} />
                     </ListItem>
                 ))}
             </List>

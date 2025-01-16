@@ -18,6 +18,7 @@ import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 import { useFrappeAuth } from 'frappe-react-sdk';
 import { useDispatch } from 'react-redux';
 import { resetCurrentSessionState } from '../../../store/slices/CurrentSessionSlice';
+import { setCurrentSettingChoice } from '../../../store/slices/SettingSlice';
 
 const Profile = () => {
 
@@ -54,6 +55,12 @@ const Profile = () => {
       //,uncomment this if you want permissions to apply without user refresh
       // window.location.reload(true);
     }, 500);
+  }
+
+  const handleProfileClick = () => {
+    dispatch(setCurrentSettingChoice('Profile'));
+    navigate('/settings');
+    setAnchorEl2(null);
   }
 
   return (
@@ -105,7 +112,7 @@ const Profile = () => {
         <MenuItem disabled>
           <ListItemText>{currentUser}</ListItemText>
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={handleProfileClick}>
           <ListItemIcon>
             <IconUser width={20} />
           </ListItemIcon>

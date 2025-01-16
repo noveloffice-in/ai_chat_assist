@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
 import { useDispatch } from 'react-redux';
-import { setAgentAdminStatus, setAgentAvailability, setAgentEmail, setAgentName } from '../store/slices/AgentSlice';
+import { setAgentAdminStatus, setAgentAvailability, setAgentDisplayName, setAgentEmail, setAgentName } from '../store/slices/AgentSlice';
 
 export default function AgentProfile(props) {
     const { Component } = props;
@@ -49,6 +49,7 @@ export default function AgentProfile(props) {
                 dispatch(setAgentEmail(agent.user));
                 dispatch(setAgentAdminStatus(agent.is_admin));
                 dispatch(setAgentAvailability(agent.is_available));
+                dispatch(setAgentDisplayName(agent.agent_display_name));
             })
             .catch((err)=>{
                 console.log(err);

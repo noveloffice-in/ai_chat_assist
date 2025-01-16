@@ -9,6 +9,7 @@ import getSocketObj from "../../utilities/getSocket";
 const MessagesLayout = () => {
     const socket = getSocketObj();
     const [socketData, setSocketData] = useState({});
+    const [refreshSessionList, setRefreshSessionList] = useState(false);
 
     useEffect(() => {
         // Event listener for receiving messages
@@ -25,7 +26,7 @@ const MessagesLayout = () => {
     }, []);
 
     return (
-        <Box sx={{ display: "flex", height:'87dvh' }}>
+        <Box sx={{ display: "flex", height: '87dvh' }}>
             {/* Sidebar: SessionList */}
             <Box
                 sx={{
@@ -34,7 +35,7 @@ const MessagesLayout = () => {
                     overflowY: "auto",
                 }}
             >
-                <SessionList socketData={socketData} />
+                <SessionList socketData={socketData} refreshSessionList={refreshSessionList} />
             </Box>
 
             {/* Chat Section */}
@@ -46,7 +47,12 @@ const MessagesLayout = () => {
                     flexDirection: "column",
                 }}
             >
-                <Chat socketData={socketData} socket={socket} />
+                <Chat
+                    socketData={socketData}
+                    socket={socket}
+                    refreshSessionList={refreshSessionList}
+                    setRefreshSessionList={setRefreshSessionList}
+                />
             </Box>
 
             {/* Details Section */}

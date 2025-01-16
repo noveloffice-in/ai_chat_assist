@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import { setSessionID } from "../../store/slices/CurrentSessionSlice"
 import arrowImage from '../../assets/images/products/arrow.png'
 
-const Chat = ({ socketData, socket }) => {
+const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList }) => {
     const sessionID = useSelector(
         (state) => state.currentSessionReducer.sessionID
     );
@@ -29,18 +29,19 @@ const Chat = ({ socketData, socket }) => {
     const updateAvailability = useCallback(
         debounce(async (status) => {
             try {
-                if (typeof (status) === 'boolean') setIsResolved(status);
                 await updateDoc("Session Details", sessionID, { "resolved": status });
-                console.log("API successfully updated with status:", status);
+                setRefreshSessionList(!refreshSessionList);
+                console.log("API successfully updated with status:", status, "and session id is", sessionID);
             } catch (err) {
                 console.error("Error updating API with status:", err);
             }
-        }, 1000),
-        []
+        }, 500),
+        [sessionID]
     );
 
     const handleCheckboxChange = (event) => {
         const status = event.target.checked; // Get the checkbox state (checked/unchecked)
+        setIsResolved(status);
         updateAvailability(status); // Trigger debounced function
     };
 
@@ -56,7 +57,7 @@ const Chat = ({ socketData, socket }) => {
         if (data?.messages) {
             setMessages(data.messages);
             console.log("data", data);
-            let status = data?.resolved ? true : false;
+            let status = data.resolved ? true : false;
             setIsResolved(status);
         }
     }, [data, error]);
@@ -70,9 +71,9 @@ const Chat = ({ socketData, socket }) => {
                     message: socketData.msg,
                 },
             ]);
-        }
-        if (socketData.username === "Guest" && isResolved) {
-            updateAvailability(false);
+            if (socketData.username === "Guest" && isResolved) {
+                updateAvailability(false);
+            }
         }
     }, [socketData]);
 
@@ -89,11 +90,11 @@ const Chat = ({ socketData, socket }) => {
 
         // Add the new message to the local state
         setMessages((prevMessages) => [...prevMessages, newMessage]);
-
+        console.log("Agent Details from chat", agent);
         // Emit the message to the socket server
         socket.emit("sendMessage", {
             sessionId: sessionID,
-            username: agent.agentName, // Replace with actual username
+            username: agent.agentDisplayName ? agent.agentDisplayName : agent.agentName,
             msg: inputMessage.trim(),
             room: sessionID,
         });

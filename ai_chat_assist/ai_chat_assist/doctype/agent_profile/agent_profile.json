@@ -9,6 +9,7 @@
   "basic_details_section",
   "user",
   "agent_name",
+  "agent_display_name",
   "column_break_ddvy",
   "is_available",
   "is_admin"
@@ -53,11 +54,16 @@
    "fieldname": "agent_name",
    "fieldtype": "Data",
    "label": "Agent Name"
+  },
+  {
+   "fieldname": "agent_display_name",
+   "fieldtype": "Data",
+   "label": "Agent Display Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-07 16:22:04.511835",
+ "modified": "2025-01-15 13:33:32.683000",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Agent Profile",
