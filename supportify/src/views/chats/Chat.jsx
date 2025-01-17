@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel } from "@mui/material";
+import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel, Stack } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useFrappeGetDoc, useFrappeUpdateDoc } from "frappe-react-sdk";
 import { debounce } from "lodash";
 import { setSessionID } from "../../store/slices/CurrentSessionSlice"
 import arrowImage from '../../assets/images/products/arrow.png'
+import getSocketObj from "../../utilities/getSocket";
+import AlertDialog from "../../layouts/full/shared/dialog/AlertDialog";
 
 const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList }) => {
     const sessionID = useSelector(
@@ -14,7 +16,9 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
 
     const [messages, setMessages] = useState([]);
     const [isResolved, setIsResolved] = useState(false);
+    const [showDialog, setShowDialog] = useState(false);
     const [inputMessage, setInputMessage] = useState("");
+    const [dialogMessage, setDialogMessage] = useState("-----");
 
     const { data, error } = useFrappeGetDoc("Session Details", sessionID);
     const { updateDoc } = useFrappeUpdateDoc();
@@ -24,7 +28,31 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     const chatEndRef = useRef(null);
 
     const primaryColor = theme.palette.primary.main;
-    const grey = theme.palette;
+
+    let title = "Do you want to claim this chat?";
+
+    let buttonNameAndFunctions = [
+        {
+            name: "No",
+            color: "error",
+            variant: "outlined",
+            function: () => {
+                setShowDialog(false);
+                setInputMessage(""); // Clear the input field
+            },
+        },
+        {
+            name: "Yes",
+            color: "primary",
+            variant: "outlined",
+            function: () => {
+                socket.emit("assignToMe", { sessionId: sessionID, user: agent.agentEmail });
+                handleSendMessageEvent();
+                setShowDialog(false);
+            },
+        },
+    ];
+
 
     const updateAvailability = useCallback(
         debounce(async (status) => {
@@ -77,31 +105,62 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
         }
     }, [socketData]);
 
-    // Handle sending a message
-    const handleSendMessage = () => {
-        if (!inputMessage.trim()) {
-            return; // Prevent sending empty messages
+    const handleAssignedUserDetails = (data) => {
+        console.log("assignedUserDetails", data.message);
+
+        if (data.assignedUser === agent.agentEmail) {
+            // Automatically send the message
+            handleSendMessageEvent(data.message);
+        } else {
+            // Ask for permission to send the message
+            setInputMessage(data.message);
+            setDialogMessage(`This chat is being handled by ${data.assignedUser}. 
+                If you click "Yes" then it will be assigned to you`)
+            setShowDialog(true);
+        }
+    };
+
+    useEffect(() => {
+        socket.on("assignedUserDetails", handleAssignedUserDetails);
+
+        return () => {
+            socket.off("assignedUserDetails", handleAssignedUserDetails); // Clean up the listener
+        };
+    }, [agent.agentEmail, sessionID]);
+
+    // Emits the message to the socket server
+    const handleSendMessageEvent = (message = null) => {
+        if (!message) {
+            message = inputMessage.trim();
+            if (!message) return; // Guard clause
         }
 
-        const newMessage = {
-            user: agent.agentName, // Can replace this with actual user info
-            message: inputMessage.trim(),
-        };
-
-        // Add the new message to the local state
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        console.log("Agent Details from chat", agent);
-        // Emit the message to the socket server
         socket.emit("sendMessage", {
             sessionId: sessionID,
-            username: agent.agentDisplayName ? agent.agentDisplayName : agent.agentName,
-            msg: inputMessage.trim(),
+            username: agent.agentDisplayName || agent.agentName,
+            msg: message,
             room: sessionID,
         });
 
-        // Clear the input field after sending
-        setInputMessage("");
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { user: agent.agentName, message: message },
+        ]);
+
+        setInputMessage(""); // Clear input
     };
+
+    // Handle sending a message
+    const handleSendMessage = () => {
+        if (!inputMessage.trim()) return; // Prevent sending empty messages
+
+        socket.emit("getAssignedUser", {
+            sessionId: sessionID,
+            user: agent.agentEmail,
+            message: inputMessage.trim(),
+        });
+    };
+
 
     // Render skeleton when sessionID is not available or loading
     if (!sessionID) {
@@ -218,6 +277,15 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                     Send
                 </Button>
             </Box>
+
+            {/* Dialog Box */}
+            <AlertDialog
+                showDialog={showDialog}
+                setShowDialog={setShowDialog}
+                title={title}
+                message={dialogMessage}
+                buttonNameAndFunctions={buttonNameAndFunctions}
+            />
         </Box>
     );
 };

@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./header/Header";
 import Sidebar from "./sidebar/Sidebar";
 import getSocketObj from "../../utilities/getSocket";
+import { useSelector } from "react-redux";
 
 
 const MainWrapper = styled("div")(() => ({
@@ -25,8 +26,10 @@ const FullLayout = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     // const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
+    const agentEmail = useSelector((state) => state.agentReducer.agentEmail);
     const socket = getSocketObj();
     socket.emit("join_room", { room: "", username: "Agent" });
+    socket.emit("join_room", { room: agentEmail, username: "Guest" });
 
     return (
             <MainWrapper className="mainwrapper">
