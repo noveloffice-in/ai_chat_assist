@@ -18,7 +18,7 @@ import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 import { useFrappeAuth } from 'frappe-react-sdk';
 import { useDispatch } from 'react-redux';
 import { resetCurrentSessionState } from '../../../store/slices/CurrentSessionSlice';
-import { setCurrentSettingChoice } from '../../../store/slices/SettingSlice';
+import { setCurrentSettingChoice, resetTheme } from '../../../store/slices/SettingSlice';
 
 const Profile = () => {
 
@@ -49,7 +49,8 @@ const Profile = () => {
     logout();
     Cookies.remove(getUserCookie);
     localStorage.clear();
-    dispatch(resetCurrentSessionState())
+    dispatch(resetCurrentSessionState());
+    dispatch(resetTheme());
     setTimeout(() => {
       navigate("/login");
       //,uncomment this if you want permissions to apply without user refresh

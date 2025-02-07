@@ -8,10 +8,15 @@
  "field_order": [
   "general_details_tab",
   "session_id",
+  "visitor_name",
   "column_break_dujw",
   "resolved",
   "section_break_khmi",
   "messages",
+  "section_break_fxyu",
+  "last_message_by",
+  "column_break_ngfl",
+  "last_message",
   "agent_details_tab",
   "current_user",
   "column_break_ixve",
@@ -83,11 +88,34 @@
    "fieldtype": "Table",
    "label": "Messages",
    "options": "Messages"
+  },
+  {
+   "fieldname": "visitor_name",
+   "fieldtype": "Data",
+   "label": "Visitor Name"
+  },
+  {
+   "fieldname": "section_break_fxyu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "last_message_by",
+   "fieldtype": "Data",
+   "label": "Last Message By"
+  },
+  {
+   "fieldname": "column_break_ngfl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_message",
+   "fieldtype": "Data",
+   "label": "Last Message"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-03 16:27:56.668749",
+ "modified": "2025-02-06 12:48:16.715188",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Session Details",

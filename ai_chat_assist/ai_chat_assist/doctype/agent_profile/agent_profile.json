@@ -12,7 +12,10 @@
   "agent_display_name",
   "column_break_ddvy",
   "is_available",
-  "is_admin"
+  "is_admin",
+  "preferred_settings_for_supportify_section",
+  "theme",
+  "canned_messages"
  ],
  "fields": [
   {
@@ -59,11 +62,27 @@
    "fieldname": "agent_display_name",
    "fieldtype": "Data",
    "label": "Agent Display Name"
+  },
+  {
+   "fieldname": "preferred_settings_for_supportify_section",
+   "fieldtype": "Section Break",
+   "label": "Preferred Settings for Supportify"
+  },
+  {
+   "fieldname": "theme",
+   "fieldtype": "Data",
+   "label": "Theme"
+  },
+  {
+   "fieldname": "canned_messages",
+   "fieldtype": "Table",
+   "label": "Canned Messages",
+   "options": "Canned Messages"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-15 13:33:32.683000",
+ "modified": "2025-02-07 14:33:33.337879",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Agent Profile",

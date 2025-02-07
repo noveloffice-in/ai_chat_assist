@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel, Stack } from "@mui/material";
+import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel, Stack, Badge } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useFrappeGetDoc, useFrappeUpdateDoc } from "frappe-react-sdk";
 import { debounce } from "lodash";
 import { setSessionID } from "../../store/slices/CurrentSessionSlice"
 import arrowImage from '../../assets/images/products/arrow.png'
-import getSocketObj from "../../utilities/getSocket";
 import AlertDialog from "../../layouts/full/shared/dialog/AlertDialog";
 
 const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList }) => {
@@ -19,6 +18,8 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     const [showDialog, setShowDialog] = useState(false);
     const [inputMessage, setInputMessage] = useState("");
     const [dialogMessage, setDialogMessage] = useState("-----");
+    const [suggestedMessages, setSuggestedMessages] = useState([]);
+    const [selectedIndex, setSelectedIndex] = useState(-1);
 
     const { data, error } = useFrappeGetDoc("Session Details", sessionID);
     const { updateDoc } = useFrappeUpdateDoc();
@@ -28,6 +29,8 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     const chatEndRef = useRef(null);
 
     const primaryColor = theme.palette.primary.main;
+    const badgeBackground = theme.palette.primary[700];
+
 
     let title = "Do you want to claim this chat?";
 
@@ -59,6 +62,11 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             try {
                 await updateDoc("Session Details", sessionID, { "resolved": status });
                 setRefreshSessionList(!refreshSessionList);
+                socket.emit("resolvedNotification", {
+                    sessionId: sessionID,
+                    username: agent.agentDisplayName || agent.agentName,
+                    room: sessionID,
+                });
                 console.log("API successfully updated with status:", status, "and session id is", sessionID);
             } catch (err) {
                 console.error("Error updating API with status:", err);
@@ -84,14 +92,13 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
         if (error) dispatch(setSessionID(""));
         if (data?.messages) {
             setMessages(data.messages);
-            console.log("data", data);
             let status = data.resolved ? true : false;
             setIsResolved(status);
         }
     }, [data, error]);
 
     useEffect(() => {
-        if (socketData.sessionId === sessionID) {
+        if (socketData.sessionId === sessionID && socketData.status !== "resolved") {
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
@@ -106,8 +113,6 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     }, [socketData]);
 
     const handleAssignedUserDetails = (data) => {
-        console.log("assignedUserDetails", data.message);
-
         if (data.assignedUser === agent.agentEmail) {
             // Automatically send the message
             handleSendMessageEvent(data.message);
@@ -152,7 +157,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
 
     // Handle sending a message
     const handleSendMessage = () => {
-        if (!inputMessage.trim()) return; // Prevent sending empty messages
+        if (!inputMessage.trim()) return;
 
         socket.emit("getAssignedUser", {
             sessionId: sessionID,
@@ -161,6 +166,77 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
         });
     };
 
+    const handleInputChange = (e) => {
+        let value = e.target.value;
+        setInputMessage(value);
+
+        // Find matching canned messages
+        let matches = agent.cannedMessages.filter(item =>
+            item.hotWord.toLowerCase().includes(value.toLowerCase())
+        );
+
+        setSuggestedMessages(matches);
+        setSelectedIndex(-1); // Reset selection
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            handleSendMessage();
+        }
+        if (e.key === 'Enter' && e.shiftKey) {
+            e.preventDefault();
+            setInputMessage(inputMessage + "\n");
+        }
+        if (suggestedMessages.length > 0) {
+            if (e.key === 'ArrowDown') {
+                setSelectedIndex((prevIndex) =>
+                    prevIndex < suggestedMessages.length - 1 ? prevIndex + 1 : 0
+                );
+                e.preventDefault();
+            } else if (e.key === 'ArrowUp') {
+                setSelectedIndex((prevIndex) =>
+                    prevIndex > 0 ? prevIndex - 1 : suggestedMessages.length - 1
+                );
+                e.preventDefault();
+            } else if (e.key === 'Tab' && selectedIndex >= 0) {
+                setInputMessage(suggestedMessages[selectedIndex].message);
+                setSuggestedMessages([]); // Clear suggestions
+                e.preventDefault();
+            }
+        }
+    };
+
+    const renderMessageSuggestions = () => (
+        <Box sx={{
+            position: "absolute",
+            bottom: "100%",
+            left: 0,
+            width: "100%",
+            backgroundColor: "#fff",
+            boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+            borderRadius: "4px",
+            maxHeight: "150px",
+            overflowY: "auto",
+            zIndex: 10,
+        }}>
+            {suggestedMessages.map((msg, index) => (
+                <Box key={msg.hotWord}
+                    sx={{
+                        padding: "8px",
+                        backgroundColor: selectedIndex === index ? "#ddd" : "#fff",
+                        cursor: "pointer",
+                        "&:hover": { backgroundColor: "#eee" }
+                    }}
+                    onMouseDown={() => {
+                        setInputMessage(msg.message);
+                        setSuggestedMessages([]);
+                    }}
+                >
+                    {msg.message}
+                </Box>
+            ))}
+        </Box>
+    );
 
     // Render skeleton when sessionID is not available or loading
     if (!sessionID) {
@@ -196,8 +272,16 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                     alignItems: 'center',
                 }}
             >
-                <Typography variant="h6">{sessionID}</Typography>
-
+                <Stack flexDirection="row">
+                    <Typography variant="h6">{data && data.visitor_name ? data.visitor_name : sessionID}</Typography>
+                    {data && data.current_user &&
+                        <Badge
+                            sx={{ ml: 1, bgcolor: badgeBackground, color: "#fff", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
+                        >
+                            {data.current_user}
+                        </Badge>
+                    }
+                </Stack>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -247,7 +331,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                                 maxWidth: "70%",
                             }}
                         >
-                            <Typography variant="body2">
+                            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
                                 {message.message}
                             </Typography>
                         </Box>
@@ -267,12 +351,20 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                     gap: 2,
                 }}
             >
-                <TextField
-                    fullWidth
-                    placeholder="Reply to live chat"
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)} // Update input state on change
-                />
+                <Box sx={{ position: "relative", width: "100%" }}>
+                    {inputMessage.length >= 3 && suggestedMessages.length > 0 && renderMessageSuggestions()}
+                    <TextField
+                        fullWidth
+                        placeholder="Reply to live chat"
+                        value={inputMessage}
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
+                        multiline
+                        minRows={1}
+                        maxRows={4}
+                        sx={{ resize: 'vertical' }}
+                    />
+                </Box>
                 <Button variant="contained" onClick={handleSendMessage}>
                     Send
                 </Button>

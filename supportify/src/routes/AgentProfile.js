@@ -3,7 +3,9 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
 import { useDispatch } from 'react-redux';
-import { setAgentAdminStatus, setAgentAvailability, setAgentDisplayName, setAgentEmail, setAgentName } from '../store/slices/AgentSlice';
+
+import { setAgentAdminStatus, setAgentAvailability, setAgentDisplayName, setAgentEmail, setAgentName, setCannedMessages } from '../store/slices/AgentSlice';
+import { setTheme } from '../store/slices/SettingSlice';
 
 export default function AgentProfile(props) {
     const { Component } = props;
@@ -50,6 +52,13 @@ export default function AgentProfile(props) {
                 dispatch(setAgentAdminStatus(agent.is_admin));
                 dispatch(setAgentAvailability(agent.is_available));
                 dispatch(setAgentDisplayName(agent.agent_display_name));
+                dispatch(setTheme(agent.theme));
+                
+                let cannedMessages = [];
+                agent.canned_messages.forEach(item => {
+                    cannedMessages.push({ hotWord: item.hot_word, message: item.message });
+                });
+                dispatch(setCannedMessages(cannedMessages));
             })
             .catch((err)=>{
                 console.log(err);

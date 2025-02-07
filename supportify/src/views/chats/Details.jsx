@@ -75,6 +75,7 @@ const Details = () => {
     }).catch(err => {
       console.log("Error while updating the Client Details", err);
     });
+    updateDoc("Session Details", sessionID, { "visitor_name": name });
   };
 
   return (

@@ -13,7 +13,8 @@ const initialState = {
     agentEmail: "",
     isAvailable: 0,
     isAdmin: 0,
-    agentDisplayName: ""
+    agentDisplayName: "",
+    cannedMessages: []
 };
 
 /**
@@ -48,12 +49,16 @@ export const AgentSlice = createSlice({
         setAgentDisplayName: (state, action) => {
             state.agentDisplayName = action.payload;
         },
+        setCannedMessages: (state, action) => {
+            state.cannedMessages = action.payload;
+        },
         resetAgentState: (state) => {
             state.agentName = "";
             state.agentEmail = "";
             state.isAvailable = 0;
             state.isAdmin = 0;
             state.agentDisplayName = "";
+            state.cannedMessages = [];
         }
     },
 });
@@ -65,6 +70,7 @@ export const {
     setAgentAvailability, 
     setAgentAdminStatus, 
     setAgentDisplayName,
+    setCannedMessages,
     resetAgentState 
 } = AgentSlice.actions;
 

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import SessionList from "./SessionList";
 import Chat from "./Chat";
 import Details from "./Details";
-import { Box, Grid } from "@mui/material";
-
+import { Box } from "@mui/material";
+//Utilities
 import getSocketObj from "../../utilities/getSocket";
+import showNotification from "../../utilities/notification";
 
 const MessagesLayout = () => {
     const socket = getSocketObj();
@@ -12,15 +13,27 @@ const MessagesLayout = () => {
     const [refreshSessionList, setRefreshSessionList] = useState(false);
 
     useEffect(() => {
+        // Request permission for desktop notifications
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then((permission) => {
+                console.log("Notification permission:", permission);
+            });
+        }
+
         // Event listener for receiving messages
         socket.on("receiveMessage", (data) => {
-            console.log("MessagesLayout", data);
+            setSocketData(data);
+            showNotification("New Message", `Message from ${data.sessionId || "Unknown"}`);
+        });
+
+        socket.on("resolvedNotification", (data) => {
             setSocketData(data);
         });
 
         // Cleanup the event listener when component unmounts or socket changes
         return () => {
             socket.off("receiveMessage");
+            socket.off("resolvedNotification");
             setSocketData({});
         };
     }, []);
@@ -30,7 +43,7 @@ const MessagesLayout = () => {
             {/* Sidebar: SessionList */}
             <Box
                 sx={{
-                    width: "25%",
+                    width: "22%",
                     border: "1px solid #ddd",
                     overflowY: "auto",
                 }}
@@ -41,7 +54,7 @@ const MessagesLayout = () => {
             {/* Chat Section */}
             <Box
                 sx={{
-                    width: "50%",
+                    width: "53%",
                     border: "1px solid #ddd",
                     display: "flex",
                     flexDirection: "column",
