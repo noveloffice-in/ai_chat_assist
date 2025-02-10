@@ -61,7 +61,8 @@
   {
    "fieldname": "agent_display_name",
    "fieldtype": "Data",
-   "label": "Agent Display Name"
+   "label": "Agent Display Name",
+   "unique": 1
   },
   {
    "fieldname": "preferred_settings_for_supportify_section",
@@ -82,7 +83,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-07 14:33:33.337879",
+ "modified": "2025-02-10 14:28:18.471092",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Agent Profile",

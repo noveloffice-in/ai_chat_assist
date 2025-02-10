@@ -15,7 +15,8 @@ class SessionDetails(Document):
 			user = last_message.user if last_message.user != "Guest" else None
 			if not user and self.resolved and frappe.session.user == "nodeuser@noveloffice.in":
 				self.resolved = 0
-			session_user = frappe.get_list("Agent Profile", filters = { "agent_name": user })
+			# session_user = frappe.get_list("Agent Profile", filters = { "agent_name": user })
+			session_user = frappe.get_list("Agent Profile", or_filters = { "agent_name": user, "agent_display_name": user })
 			if len(session_user) > 0:
 				session_user = session_user[0].name
 
