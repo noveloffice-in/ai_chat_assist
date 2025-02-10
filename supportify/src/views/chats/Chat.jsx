@@ -331,9 +331,16 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                                 maxWidth: "70%",
                             }}
                         >
-                            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                                {message.message}
-                            </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                {message.user !== "Guest" && (
+                                    <Typography variant="caption" sx={{ color: message.user === "Guest" ? '#666' : '#fff', opacity: 0.7, fontSize: '0.7rem' }}>
+                                        {message.user}
+                                    </Typography>
+                                )}
+                                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                                    {message.message}
+                                </Typography>
+                            </Box>
                         </Box>
                     ))
                 )}
