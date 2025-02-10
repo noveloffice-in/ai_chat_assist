@@ -19,7 +19,7 @@ const Header = (props) => {
     justifyContent: 'center',
     backdropFilter: 'blur(4px)',
     [theme.breakpoints.up('lg')]: {
-      minHeight: '70px',
+      minHeight: '60px',
     },
   }));
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
@@ -44,7 +44,8 @@ const Header = (props) => {
           <IconMenu width="20" height="20" />
         </IconButton>
 
-        <Box flexGrow={1} >
+        <Box flexGrow={1} sx={{ display: 'flex', alignItems: 'center' }}>
+          <img src="/supportify_logo.svg" alt="Supportify Logo" style={{ height: '40px', marginRight: '10px' }} />
           <Typography variant='h2'>
             Supportify
           </Typography>
