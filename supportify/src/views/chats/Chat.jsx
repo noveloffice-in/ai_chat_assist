@@ -21,7 +21,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     const [suggestedMessages, setSuggestedMessages] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
-    const { data, error } = useFrappeGetDoc("Session Details", sessionID);
+    const { data, error, mutate } = useFrappeGetDoc("Session Details", sessionID);
     const { updateDoc } = useFrappeUpdateDoc();
 
     const theme = useTheme();
@@ -146,6 +146,11 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             msg: message,
             room: sessionID,
         });
+
+        setTimeout(() => {
+            mutate();
+            setRefreshSessionList(!refreshSessionList);
+        }, 2000);
 
         setMessages((prevMessages) => [
             ...prevMessages,
