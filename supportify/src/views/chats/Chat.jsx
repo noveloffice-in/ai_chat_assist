@@ -89,6 +89,10 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     }, [messages]);
 
     useEffect(() => {
+        mutate();
+    }, [refreshSessionList]);
+
+    useEffect(() => {
         if (error) dispatch(setSessionID(""));
         if (data?.messages) {
             setMessages(data.messages);

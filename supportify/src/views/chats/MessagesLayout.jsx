@@ -76,7 +76,9 @@ const MessagesLayout = () => {
                     overflowY: "auto",
                 }}
             >
-                <Details />
+                <Details
+                    setRefreshSessionList={setRefreshSessionList}
+                />
             </Box>
         </Box>
     );
