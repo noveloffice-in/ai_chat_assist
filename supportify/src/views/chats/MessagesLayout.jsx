@@ -23,6 +23,9 @@ const MessagesLayout = () => {
         // Event listener for receiving messages
         socket.on("receiveMessage", (data) => {
             setSocketData(data);
+            setTimeout(() => {
+                setRefreshSessionList(prev => !prev);
+            }, 2000);
             showNotification("New Message", `Message from ${data.sessionId || "Unknown"}`);
         });
 
