@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Profile from './Profile';
 import { IconBellRinging, IconMenu } from '@tabler/icons-react';
 import Available from './Available';
+import logo from '../../../assets/images/logos/supportify_logo.svg';
 
 const Header = (props) => {
 
@@ -45,7 +46,7 @@ const Header = (props) => {
         </IconButton>
 
         <Box flexGrow={1} sx={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/supportify_logo.svg" alt="Supportify Logo" style={{ height: '40px', marginRight: '10px' }} />
+          <img src={logo} alt="Supportify Logo" style={{ height: '40px', marginRight: '10px' }} />
           <Typography variant='h2'>
             Supportify
           </Typography>
@@ -68,7 +69,7 @@ const Header = (props) => {
 
         </IconButton> */}
         <Stack spacing={1} direction="row" alignItems="center">
-          <Available/>
+          <Available />
           {/* <Button variant="contained" color="primary"  target="_blank" href="https://adminmart.com/product/modernize-react-mui-dashboard-template/">
             Upgrade to Pro
           </Button> */}
