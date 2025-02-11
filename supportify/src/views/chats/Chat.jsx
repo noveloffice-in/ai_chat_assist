@@ -153,12 +153,14 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
 
         setTimeout(() => {
             mutate();
-            setRefreshSessionList(!refreshSessionList);
+            setRefreshSessionList(prev => !prev);
         }, 2000);
+
+        let agentName = agent.agentDisplayName ? agent.agentDisplayName : agent.agentName;
 
         setMessages((prevMessages) => [
             ...prevMessages,
-            { user: agent.agentName, message: message },
+            { user: agentName, message: message },
         ]);
 
         setInputMessage(""); // Clear input
