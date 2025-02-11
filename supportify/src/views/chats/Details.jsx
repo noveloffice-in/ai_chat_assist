@@ -4,7 +4,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useFrappeGetCall, useFrappeGetDoc, useFrappeUpdateDoc } from 'frappe-react-sdk';
 import { useSelector } from 'react-redux';
 
-const Details = () => {
+const Details = ({ setRefreshSessionList }) => {
   // Initial values
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -58,9 +58,11 @@ const Details = () => {
         "email_address": email
       }
     ).then(res => {
-      console.log("Successfully updated the Client Details", res);
       switch (field) {
         case "name":
+          setTimeout(() => {
+            setRefreshSessionList(prev => !prev);
+          }, 2000);
           setIsNameValid(false);
           break;
         case "email":
