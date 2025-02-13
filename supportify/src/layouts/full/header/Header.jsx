@@ -46,7 +46,7 @@ const Header = (props) => {
         </IconButton>
 
         <Box flexGrow={1} sx={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo} alt="Supportify Logo" style={{ height: '40px', marginRight: '10px' }} />
+          {/* <img src={logo} alt="Supportify Logo" style={{ height: '40px', marginRight: '10px' }} /> */}
           <Typography variant='h2'>
             Supportify
           </Typography>
