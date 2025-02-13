@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentSettingChoice } from '../../store/slices/SettingSlice';
 import { Box, List, ListItem, ListItemIcon, ListItemText, useTheme } from '@mui/material';
 import { IconSettingsCog, IconUserEdit, IconBrandBluesky, IconUsersGroup } from '@tabler/icons-react'
+import { useFrappeGetDoc } from 'frappe-react-sdk';
 
 const SettingsSidebar = () => {
     const dispatch = useDispatch();
@@ -10,6 +11,8 @@ const SettingsSidebar = () => {
     const primaryColor = theme.palette.primary.main;
 
     const selectedOption = useSelector((state) => state.settingsReducer.currentSettingChoice); // Get selected option from Redux store
+    const agent = useSelector((state) => state.agentReducer);
+    const { data: agentData } = useFrappeGetDoc("Agent Profile", agent.agentEmail);
 
     const handleClick = (option) => {
         dispatch(setCurrentSettingChoice(option)); // Dispatch the action
@@ -19,8 +22,9 @@ const SettingsSidebar = () => {
         { name: "Profile", icon: <IconUserEdit /> },
         { name: "Account", icon: <IconSettingsCog /> },
         { name: "General", icon: <IconBrandBluesky /> },
-        { name: "Agents", icon: <IconUsersGroup /> },
     ];
+
+    if (agentData && agentData.is_admin) options.push({ name: "Agents", icon: <IconUsersGroup /> });
 
     return (
         <Box sx={{ width: '25%', backgroundColor: '#f4f4f4', padding: '20px', display: 'flex', flexDirection: 'column' }}>

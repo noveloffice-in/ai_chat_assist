@@ -8,6 +8,7 @@ def check_agent(user):
 
     new_agent = frappe.new_doc("Agent Profile")
     new_agent.user = user
+    new_agent.enabled = 1
     new_agent.save()
     return new_agent
 
@@ -38,3 +39,11 @@ def get_canned_messages():
     if(agent):
         return agent.canned_messages
     return []
+
+@frappe.whitelist()
+def get_users_without_agent_profile():
+    agent_profiles = frappe.get_list("Agent Profile", pluck = "user")
+    agent_profiles.append("Guest")
+    agent_profiles.append("Administrator")
+    users = frappe.get_list("User", filters = { "name": [ "not in", agent_profiles ] })
+    return users
