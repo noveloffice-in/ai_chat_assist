@@ -27,6 +27,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AlertDialog from "../../../layouts/full/shared/dialog/AlertDialog";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
+
 const agentStatus = [
   {
     name: "Enabled",
@@ -36,14 +37,16 @@ const agentStatus = [
     name: "Disabled",
     color: "#FF4D4D"
   }
-]
+];
+
 const tableHeads = [
   "Agent Name",
   "Display Name",
   "Available",
   "Admin",
   "Action"
-]
+];
+
 export default function Agents() {
   const { data: agents, mutate } = useFrappeGetDocList("Agent Profile", {
     fields: ["name", "agent_name", "agent_display_name", "is_available", "is_admin", "enabled"],
@@ -53,33 +56,40 @@ export default function Agents() {
   const { createDoc } = useFrappeCreateDoc();
   const loggedInAgentEmail = useSelector(state => state.agentReducer.agentEmail);
   const [editableAgents, setEditableAgents] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [dialogState, setDialogState] = useState({
+    open: false,
+    title: "",
+    message: "",
+    agentName: "",
+    currentEnabled: false,
+    buttonNameAndFunctions: []
+  });
+
   const [openAddAgentDialog, setOpenAddAgentDialog] = useState(false);
   const [newAgent, setNewAgent] = useState({ user: "", agent_name: "", agent_display_name: "" });
   const [users, setUsers] = useState([]);
-  const [agentName, setAgentName] = useState("Hello");
-  const [dialogTitle, setDialogTitle] = useState(null);
-  const [dialogButtonNameAndFunctions, setDialogButtonNameAndFunctions] = useState([]);
-  const [dialogMessage, setDialogMessage] = useState("");
+
   useEffect(() => {
     if (agents) {
       setEditableAgents(agents);
     }
   }, [agents]);
-  const notifySuccess = (message) => { toast.success(message, { toastId: "success" }) }
-  const notifyError = (message) => { toast.error(message, { toastId: "error" }) }
-  const notifyWarning = (message) => { toast.warning(message, { toastId: "warning" }) }
+    
+  const notifySuccess = (message) => toast.success(message, { toastId: "success" });
+  const notifyError = (message) => toast.error(message, { toastId: "error" });
+
   const debouncedUpdate = useCallback(
     debounce(async (name, field, value) => {
       try {
         await updateDoc("Agent Profile", name, { [field]: value });
-        mutate(); // Refresh data after update
+        mutate();
       } catch (error) {
         console.error("Update failed:", error);
       }
     }, 500),
     []
   );
+
   const handleCheckboxChange = (name, field) => (event) => {
     const newValue = event.target.checked;
     setEditableAgents((prev) =>
@@ -89,35 +99,38 @@ export default function Agents() {
     );
     debouncedUpdate(name, field, newValue);
   };
+
   const handleAddAgent = () => {
-    setOpen(true);
     call({})
       .then((res) => {
         setUsers(res.message);
         setOpenAddAgentDialog(true);
       })
-      .catch((err) => {
+      .catch(() => {
         notifyError("Error fetching users without agent profile");
       });
-  }
+  };
+
   const handleClose = () => {
-    setOpen(false);
+    setDialogState(prev => ({ ...prev, open: false }));
     setNewAgent({ user: "", agent_name: "", agent_display_name: "" });
   };
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setNewAgent((prev) => ({
+    setNewAgent(prev => ({
       ...prev,
       [name]: value
     }));
   };
+
+  const handleCloseAddAgentDialog = () => {
+    setOpenAddAgentDialog(false);
+  };
+  
   const handleSave = async () => {
-    if (!newAgent.agent_name) {
-      notifyError("Agent Name is required!");
-      return;
-    }
-    if (!newAgent.user) {
-      notifyError("User is required!");
+    if (!newAgent.agent_name || !newAgent.user) {
+      notifyError(newAgent.agent_name ? "User is required!" : "Agent Name is required!");
       return;
     }
     try {
@@ -129,83 +142,61 @@ export default function Agents() {
       notifyError("Error adding agent!");
     }
   };
-  const handleCloseAddAgentDialog = () => {
-    setOpenAddAgentDialog(false);
+
+  const handleToggleEnabled = async (name, currentEnabled) => {
+    const newEnabled = !currentEnabled;
+    const title = newEnabled ? "Enable Agent" : "Disable Agent";
+    const message = `Are you sure you want to ${newEnabled ? 'enable' : 'disable'} this agent?`;
+    const handleConfirm = async () => {
+      try {
+        await updateDoc("Agent Profile", name, { enabled: newEnabled });
+        handleClose();
+        mutate();
+        notifySuccess(`Agent ${newEnabled ? 'enabled' : 'disabled'} successfully!`);
+      } catch (err) {
+        console.error(err);
+        notifyError(`Error ${newEnabled ? 'enabling' : 'disabling'} agent!`);
+      }
+    };
+    setDialogState({
+      open: true,
+      title,
+      message,
+      agentName: name,
+      currentEnabled: currentEnabled,
+      buttonNameAndFunctions: [
+        { name: "Cancel", function: handleClose },
+        { name: newEnabled ? "Enable" : "Disable", function: handleConfirm }
+      ]
+    });
   };
-  const handleDisable = () => {
-    console.log("Agent Name", agentName);
-    if (agents) {
-      updateDoc("Agent Profile", agentName, { enabled: false })
-        .then(() => {
-          handleClose();
-          mutate();
-          notifySuccess("Agent disabled successfully!");
-        })
-        .catch((err) => {
-          console.log(err);
-          notifyError("Error disabling agent!");
-        });
-    }
-  }
-  const handleEnable = () => {
-    console.log("Agent Name", agentName);
-    if (agents) {
-      updateDoc("Agent Profile", agentName, { enabled: true })
-        .then(() => {
-          handleClose();
-          mutate();
-          notifySuccess("Agent enabled successfully!");
-        })
-        .catch((err) => {
-          console.log(err);
-          notifyError("Error enabling agent!");
-        });
-    }
-  }
-  const handleToggleEnabled = (name, enabled) => {
-    console.log("name", name);
-    // console.log("enabled", enabled);
-    const buttonName = enabled ? "Disable" : "Enable";
-    setAgentName(name);
-    setOpen(true);
-    setDialogTitle(enabled ? "Disable Agent" : "Enable Agent");
-    setDialogMessage(enabled ? "Are you sure you want to disable this agent?" : "Are you sure you want to enable this agent?");
-    setDialogButtonNameAndFunctions([
-      { name: "Cancel", function: handleClose },
-      { name: buttonName, function: buttonName === "Disable" ? handleDisable : handleEnable }
-    ]);
-  };
+
   return (
     <>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Stack sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          {agentStatus.map((status) => (
-            <Stack direction="row" alignItems="center" gap={1}>
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", p: 0.8, backgroundColor: status.color }} ></Box>
-              <Typography variant="caption">~ {status.name} </Typography>
+          {agentStatus.map((status, index) => (
+            <Stack key={index} direction="row" alignItems="center" gap={1}>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", p: 0.8, backgroundColor: status.color }} />
+              <Typography variant="caption">~ {status.name}</Typography>
             </Stack>
           ))}
         </Stack>
-        {/* Add Agent Button */}
-        <Button
-          variant="contained"
-          onClick={handleAddAgent}
-        >
+        <Button variant="contained" onClick={handleAddAgent}>
           <AddIcon />
           Add Agent
         </Button>
       </Box>
-      {/* Agents Table */}
       <Paper elevation={10} sx={{ p: 2, borderRadius: "16px", mt: 2 }}>
         <TableContainer sx={{ borderRadius: "16px" }}>
           <Table>
             <TableHead>
               <TableRow>
-                {
-                  tableHeads.map((head) => (
-                    <TableCell key={head}><Typography variant="body2" fontWeight={600}>{head}</Typography></TableCell>
-                  ))
-                }
+                {tableHeads.map((head) => (
+                  <TableCell key={head}>
+                    <Typography variant="body2" fontWeight={600}>{head}</Typography>
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -213,7 +204,7 @@ export default function Agents() {
                 <TableRow key={agent.name}>
                   <TableCell>
                     <Stack direction="row" alignItems="center" gap={1}>
-                      <Box sx={{ display: "flex", alignItems: "center", borderRadius: "50%", p: 1, backgroundColor: agent.enabled ? "#00CC00" : "#FF4D4D" }} ></Box>
+                      <Box sx={{ display: "flex", alignItems: "center", borderRadius: "50%", p: 1, backgroundColor: agent.enabled ? "#00CC00" : "#FF4D4D" }} />
                       {agent.agent_name}
                     </Stack>
                   </TableCell>
@@ -233,8 +224,10 @@ export default function Agents() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => handleToggleEnabled(agent.name, agent.enabled)}
-                      disabled={agent.name === "Administrator" || agent.name === loggedInAgentEmail}>
+                    <Button
+                      onClick={() => handleToggleEnabled(agent.name, agent.enabled)}
+                      disabled={agent.name === "Administrator" || agent.name === loggedInAgentEmail}
+                    >
                       {agent.enabled ? <PersonOffIcon /> : <PersonIcon />}
                     </Button>
                   </TableCell>
@@ -245,13 +238,12 @@ export default function Agents() {
         </TableContainer>
       </Paper>
       <AlertDialog
-        showDialog={open}
+        showDialog={dialogState.open}
         setShowDialog={handleClose}
-        title={dialogTitle}
-        message={dialogMessage}
-        buttonNameAndFunctions={dialogButtonNameAndFunctions}
+        title={dialogState.title}
+        message={dialogState.message}
+        buttonNameAndFunctions={dialogState.buttonNameAndFunctions}
       />
-      {/* Add Agent Dialog */}
       <Dialog open={openAddAgentDialog} onClose={handleCloseAddAgentDialog}>
         <DialogTitle>Add New Agent</DialogTitle>
         <DialogContent>
@@ -307,7 +299,6 @@ export default function Agents() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      // theme={theme.palette.mode}
       />
     </>
   );
