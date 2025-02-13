@@ -39,30 +39,30 @@ export default function AgentProfile(props) {
         };
     }, []);
 
-    const {call} = useFrappePostCall('ai_chat_assist.api.supportify.agent.check_agent');
+    const { call } = useFrappePostCall('ai_chat_assist.api.supportify.agent.check_agent');
 
     useEffect(() => {
-        if(currentUser){
-            call({"user" : currentUser})
-            .then((res)=>{
-                let agent = res.message;
-                
-                dispatch(setAgentName(agent.agent_name));
-                dispatch(setAgentEmail(agent.user));
-                dispatch(setAgentAdminStatus(agent.is_admin));
-                dispatch(setAgentAvailability(agent.is_available));
-                dispatch(setAgentDisplayName(agent.agent_display_name));
-                dispatch(setTheme(agent.theme));
-                
-                let cannedMessages = [];
-                agent.canned_messages.forEach(item => {
-                    cannedMessages.push({ hotWord: item.hot_word, message: item.message });
-                });
-                dispatch(setCannedMessages(cannedMessages));
-            })
-            .catch((err)=>{
-                console.log(err);
-            })
+        if (currentUser) {
+            call({ "user": currentUser })
+                .then((res) => {
+                    let agent = res.message;
+
+                    dispatch(setAgentName(agent.agent_name));
+                    dispatch(setAgentEmail(agent.user));
+                    dispatch(setAgentAdminStatus(agent.is_admin));
+                    dispatch(setAgentAvailability(agent.is_available));
+                    dispatch(setAgentDisplayName(agent.agent_display_name));
+                    dispatch(setTheme(agent.theme));
+
+                    let cannedMessages = [];
+                    agent.canned_messages.forEach(item => {
+                        cannedMessages.push({ hotWord: item.hot_word, message: item.message });
+                    });
+                    dispatch(setCannedMessages(cannedMessages));
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
         }
     }, [currentUser]);
 

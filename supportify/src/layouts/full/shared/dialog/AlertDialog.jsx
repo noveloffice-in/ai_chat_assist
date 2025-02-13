@@ -25,7 +25,7 @@ export default function AlertDialog({ showDialog, setShowDialog, title, message,
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {message}
+            {typeof message === "function" ? message() : message}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -13,6 +13,7 @@
   "column_break_ddvy",
   "is_available",
   "is_admin",
+  "enabled",
   "preferred_settings_for_supportify_section",
   "theme",
   "canned_messages"
@@ -79,11 +80,17 @@
    "fieldtype": "Table",
    "label": "Canned Messages",
    "options": "Canned Messages"
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-10 14:28:18.471092",
+ "modified": "2025-02-12 12:25:34.565845",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Agent Profile",
