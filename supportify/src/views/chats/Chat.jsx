@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel, Stack, Badge } from "@mui/material";
+import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel, Stack, Badge, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useFrappeGetDoc, useFrappeUpdateDoc } from "frappe-react-sdk";
 import { debounce } from "lodash";
@@ -286,11 +286,18 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                 <Stack flexDirection="row">
                     <Typography variant="h6">{data && data.visitor_name ? data.visitor_name : sessionID}</Typography>
                     {data && data.current_user &&
-                        <Badge
-                            sx={{ ml: 1, bgcolor: badgeBackground, color: "#fff", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
+                        <Tooltip 
+                            title="Assigned To" 
+                            placement="right" 
+                            arrow
+                            disableInteractive
                         >
-                            {data.current_user}
-                        </Badge>
+                            <Badge
+                            sx={{ ml: 1, bgcolor: badgeBackground, color: "#fff", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
+                            >
+                            <span>{data.current_user}</span>
+                            </Badge>
+                        </Tooltip>
                     }
                 </Stack>
                 <FormControlLabel
