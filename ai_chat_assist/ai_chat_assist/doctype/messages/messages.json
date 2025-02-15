@@ -37,7 +37,7 @@
   },
   {
    "fieldname": "message",
-   "fieldtype": "Small Text",
+   "fieldtype": "Long Text",
    "in_list_view": 1,
    "label": "Message"
   }
@@ -45,7 +45,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-04 15:03:07.769415",
+ "modified": "2025-02-15 10:40:01.598841",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Messages",

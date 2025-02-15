@@ -134,8 +134,10 @@ export default function Agents() {
       return;
     }
     try {
+      newAgent["enabled"] = 1;
       await createDoc("Agent Profile", newAgent);
       mutate();
+      handleClose();
       handleCloseAddAgentDialog();
       notifySuccess("Agent added successfully!");
     } catch (error) {
