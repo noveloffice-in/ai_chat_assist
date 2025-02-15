@@ -11,7 +11,7 @@ class SessionDetails(Document):
 		if len(self.messages) > 0:
 			last_message = self.messages[-1]
 			self.last_message_by = last_message.user
-			self.last_message = last_message.message
+			self.last_message = last_message.message[:25]
 			user = last_message.user if last_message.user != "Guest" else None
 			if not user and self.resolved and frappe.session.user == "nodeuser@noveloffice.in":
 				self.resolved = 0
