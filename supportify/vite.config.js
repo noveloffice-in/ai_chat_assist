@@ -6,7 +6,12 @@ import svgr from '@svgr/rollup'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [svgr(), react()],
+	plugins: [svgr(), react({
+		jsxImportSource: '@emotion/react',
+		babel: {
+			plugins: ['@emotion/babel-plugin'],
+		},
+	}),],
 	server: {
 		port: 8080,
 		proxy: proxyOptions
