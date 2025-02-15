@@ -183,7 +183,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
 
         // Find matching canned messages
         let matches = agent.cannedMessages.filter(item =>
-            item.hotWord.toLowerCase().includes(value.toLowerCase())
+            `/${item.hotWord}`.toLowerCase().includes(value.toLowerCase())
         );
 
         setSuggestedMessages(matches);
