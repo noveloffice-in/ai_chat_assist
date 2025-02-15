@@ -144,8 +144,8 @@ const SessionList = ({ socketData, refreshSessionList }) => {
                         {/* Right Section: Red Badge if last_message_by is "Guest" */}
                         {session.last_message_by === "Guest" && (
                             <Badge
-                                badgeContent={1}
-                                color="error"
+                                badgeContent={""}
+                                color="success"
                                 sx={{ ml: 2 }} // Adds some margin to the left
                             />
                         )}
