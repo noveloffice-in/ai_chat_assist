@@ -27,6 +27,7 @@ const SessionList = ({ socketData, refreshSessionList }) => {
     const badgeHover = theme.palette.primary[400];
 
     const filters = [["resolved", "=", activeTab === "open" ? 0 : 1]];
+    filters.push(["last_message", "!=", ""]);
     if (subTab !== "all") filters.push(["current_user", "=", agent.agentEmail]);
 
     const { data, error, isLoading, mutate } = useFrappeGetDocList("Session Details", {
