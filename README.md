@@ -22,5 +22,10 @@ AI Chat Assist is a web application that allows users to chat with an AI assista
 - Node.js
 - Material UI
 
+## Branch details
+- main => Production
+- development => Prabhudev's branch and Testing
+- raj-dev => Rajkumar's branch
+
 ## License
 MIT License
