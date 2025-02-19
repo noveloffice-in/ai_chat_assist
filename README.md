@@ -32,3 +32,6 @@ MIT License
 
 ## Test
 Conflict
+
+## Test
+Conflict created.
