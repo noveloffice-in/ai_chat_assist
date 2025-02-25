@@ -19,6 +19,7 @@ import {
   Box,
   Stack,
   Typography,
+  Switch
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { debounce } from "lodash";
@@ -212,7 +213,7 @@ export default function Agents() {
                   </TableCell>
                   <TableCell>{agent.agent_display_name || "N/A"}</TableCell>
                   <TableCell>
-                    <Checkbox
+                    <Switch
                       checked={!!agent.is_available}
                       onChange={handleCheckboxChange(agent.name, "is_available")}
                       disabled={agent.name === "Administrator" || !agent.enabled}
