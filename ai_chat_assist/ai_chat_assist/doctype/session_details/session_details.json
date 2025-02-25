@@ -17,8 +17,11 @@
   "last_message_by",
   "column_break_ngfl",
   "last_message",
+  "column_break_kdbj",
+  "last_message_at",
   "agent_details_tab",
   "current_user",
+  "agent_name",
   "column_break_ixve",
   "time_taken_for_first_response",
   "section_break_qhjm",
@@ -96,7 +99,8 @@
   },
   {
    "fieldname": "section_break_fxyu",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "For Session List"
   },
   {
    "fieldname": "last_message_by",
@@ -111,11 +115,25 @@
    "fieldname": "last_message",
    "fieldtype": "Data",
    "label": "Last Message"
+  },
+  {
+   "fieldname": "agent_name",
+   "fieldtype": "Data",
+   "label": "Agent Name"
+  },
+  {
+   "fieldname": "column_break_kdbj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_message_at",
+   "fieldtype": "Data",
+   "label": "Last Message At"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-06 12:48:16.715188",
+ "modified": "2025-02-25 10:07:38.385518",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Session Details",

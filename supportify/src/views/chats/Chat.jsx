@@ -7,6 +7,10 @@ import { setSessionID } from "../../store/slices/CurrentSessionSlice"
 import arrowImage from '../../assets/images/products/arrow.png'
 import AlertDialog from "../../layouts/full/shared/dialog/AlertDialog";
 
+import dayjs from "dayjs";
+import Typing from "./Typing";
+import { setAgentAvailability } from "../../store/slices/AgentSlice";
+
 const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList }) => {
     const sessionID = useSelector(
         (state) => state.currentSessionReducer.sessionID
@@ -49,7 +53,12 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             color: "primary",
             variant: "outlined",
             function: () => {
-                socket.emit("assignToMe", { sessionId: sessionID, user: agent.agentEmail });
+                socket.emit("assignToMe", {
+                    sessionId: sessionID,
+                    user: agent.agentDisplayName ? agent.agentDisplayName : agent.agentName,
+                    agentEmail: agent.agentEmail
+                });
+                dispatch(setAgentAvailability(1));
                 handleSendMessageEvent();
                 setShowDialog(false);
             },
@@ -66,6 +75,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                     sessionId: sessionID,
                     username: agent.agentDisplayName || agent.agentName,
                     room: sessionID,
+                    agentEmail: agent.agentEmail
                 });
                 console.log("API successfully updated with status:", status, "and session id is", sessionID);
             } catch (err) {
@@ -149,6 +159,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             username: agent.agentDisplayName || agent.agentName,
             msg: message,
             room: sessionID,
+            agentEmail: agent.agentEmail,
         });
 
         setTimeout(() => {
@@ -172,14 +183,19 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
 
         socket.emit("getAssignedUser", {
             sessionId: sessionID,
-            user: agent.agentEmail,
+            user: agent.agentDisplayName ? agent.agentDisplayName : agent.agentName,
             message: inputMessage.trim(),
+            agentEmail: agent.agentEmail,
         });
     };
 
     const handleInputChange = (e) => {
         let value = e.target.value;
         setInputMessage(value);
+
+        socket.emit("agentTyping", {
+            room: sessionID
+        })
 
         // Find matching canned messages
         let matches = agent.cannedMessages.filter(item =>
@@ -286,16 +302,16 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                 <Stack flexDirection="row">
                     <Typography variant="h6">{data && data.visitor_name ? data.visitor_name : sessionID}</Typography>
                     {data && data.current_user &&
-                        <Tooltip 
-                            title="Assigned To" 
-                            placement="right" 
+                        <Tooltip
+                            title="Assigned To"
+                            placement="right"
                             arrow
                             disableInteractive
                         >
                             <Badge
-                            sx={{ ml: 1, bgcolor: badgeBackground, color: "#fff", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
+                                sx={{ ml: 1, bgcolor: badgeBackground, color: "#fff", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
                             >
-                            <span>{data.current_user}</span>
+                                <span>{data.current_user}</span>
                             </Badge>
                         </Tooltip>
                     }
@@ -330,47 +346,135 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                         No messages yet...
                     </Typography>
                 ) : (
-                    messages.map((message, index) => (
-                        <Box
-                            key={index}
-                            sx={{
-                                alignSelf:
-                                    message.user === "Guest"
-                                        ? "flex-start"
-                                        : "flex-end",
-                                backgroundColor:
-                                    message.user === "Guest"
-                                        ? "#f0f0f0"
-                                        : primaryColor,
-                                color:
-                                    message.user === "Guest" ? "#000" : "#fff",
-                                padding: 1,
-                                borderRadius: 1,
-                                maxWidth: "70%",
-                            }}
-                        >
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                {message.user !== "Guest" && (
-                                    <Typography variant="caption" sx={{ color: message.user === "Guest" ? '#666' : '#fff', opacity: 0.7, fontSize: '0.7rem' }}>
-                                        {message.user}
-                                    </Typography>
-                                )}
-                                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                                    {message.message}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    ))
+                    (() => {
+                        let lastDate = null;
+
+                        return messages.map((message, index) => {
+                            const messageDate = dayjs(message.time_stamp).format("YYYY-MM-DD");
+                            const messageTime = dayjs(message.time_stamp).format("hh:mm A"); // WhatsApp-style time
+
+                            let showDateHeader = lastDate !== messageDate;
+                            lastDate = messageDate;
+
+                            return (
+                                <React.Fragment key={index}>
+                                    {/* Date Tag (only once per day) */}
+                                    {showDateHeader && (
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                width: "100%",
+                                                my: 1
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    backgroundColor: "#d3d3d3",
+                                                    color: "#333",
+                                                    padding: "0px 8px",
+                                                    borderRadius: "16px",
+                                                    fontSize: "0.7rem",
+                                                    fontWeight: "300",
+                                                    textAlign: "center"
+                                                }}
+                                            >
+                                                {dayjs(message.time_stamp).format("MMMM D, YYYY")}
+                                                {message.message_type === "Activity" && ` - ${message.message}`}
+                                            </Typography>
+                                        </Box>
+                                    )}
+
+                                    {/* Activity Message */}
+                                    {message.message_type === "Activity" && !showDateHeader && (
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                width: "100%",
+                                                my: 1
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    backgroundColor: "#d3d3d3",
+                                                    color: "#333",
+                                                    padding: "0px 8px",
+                                                    borderRadius: "16px",
+                                                    fontSize: "0.7rem",
+                                                    fontWeight: "300",
+                                                    textAlign: "center"
+                                                }}
+                                            >
+                                                {message.message}
+                                            </Typography>
+                                        </Box>
+                                    )}
+
+                                    {/* Regular Chat Message */}
+                                    {message.message_type === "Message" && (
+                                        <Box
+                                            sx={{
+                                                alignSelf: message.user === "Guest" ? "flex-start" : "flex-end",
+                                                backgroundColor: message.user === "Guest" ? "#f0f0f0" : primaryColor,
+                                                color: message.user === "Guest" ? "#000" : "#fff",
+                                                padding: 1,
+                                                borderRadius: 1,
+                                                maxWidth: "70%",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                position: "relative",
+                                                wordBreak: "break-word",
+                                                whiteSpace: 'pre-wrap',
+                                                overflowWrap: 'break-word',
+                                            }}
+                                        >
+                                            {message.user !== "Guest" && (
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{
+                                                        color: message.user === "Guest" ? "#666" : "#fff",
+                                                        opacity: 0.7,
+                                                        fontSize: "0.7rem"
+                                                    }}
+                                                >
+                                                    {message.user}
+                                                </Typography>
+                                            )}
+                                            <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                                                {message.message}
+                                            </Typography>
+                                            {/* Time Stamp */}
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    alignSelf: "flex-end",
+                                                    fontSize: "0.7rem",
+                                                    opacity: 0.7,
+                                                    marginTop: "2px"
+                                                }}
+                                            >
+                                                {messageTime}
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                </React.Fragment>
+                            );
+                        });
+                    })()
                 )}
                 {/* Scroll to bottom */}
                 <div ref={chatEndRef} />
             </Box>
 
+            <Typing socket={socket}/>
+
             {/* Input Section */}
             <Box
                 sx={{
-                    padding: 2,
-                    borderTop: "1px solid #ddd",
+                    padding: 1,
                     display: "flex",
                     bottom: "0px",
                     gap: 2,

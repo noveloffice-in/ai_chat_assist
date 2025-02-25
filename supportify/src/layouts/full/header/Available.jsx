@@ -13,28 +13,26 @@ export default function Available() {
     const agentDetails = useSelector((state) => state.agentReducer);
     const dispatch = useDispatch();
 
-    const {updateDoc} = useFrappeUpdateDoc();
-    const { data, error } = useFrappeGetDocList("Agent Profile", { filters: [["name", "=", agentDetails.agentEmail]], fields: ["is_available"] })
+    const { updateDoc } = useFrappeUpdateDoc();
 
     const updateAvailability = useCallback(
         debounce(async (status) => {
-            updateDoc("Agent Profile", agentDetails.agentEmail, {is_available : status})
-            .then((res)=>{
-                console.log("res = ", res);
-            })
-            .catch((err)=>{
-                console.log("Error = ", err);
-            })
+            updateDoc("Agent Profile", agentDetails.agentEmail, { is_available: status })
+                .then((res) => {
+                    console.log("res = ", res);
+                })
+                .catch((err) => {
+                    console.log("Error = ", err);
+                })
             console.log("Updating API with status:", status);
         }, 1000),
         []
     );
 
     useEffect(() => {
-        let status = data?.length > 0 && data[0].is_available === 0 ? false : true;
-        setAvailable(status);
-        dispatch(setAgentAvailability(status));
-    }, [data]);
+        setAvailable(agentDetails.isAvailable);
+        updateAvailability(agentDetails.isAvailable);
+    }, [agentDetails.isAvailable]);
 
     const GreenSwitch = styled(Switch)(({ theme }) => ({
         // Styles when checked (Green)
@@ -63,9 +61,9 @@ export default function Available() {
     const label = { inputProps: { 'aria-label': 'Color switch demo' } };
 
     const handleCheck = (e) => {
-        let status =  e.target.checked ? 1 : 0;
+        let status = e.target.checked ? 1 : 0;
         setAvailable(e.target.checked);
-        updateAvailability(status);
+        dispatch(setAgentAvailability(status))
     }
 
     return (
