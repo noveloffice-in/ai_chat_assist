@@ -5,7 +5,7 @@ import { Box, List, ListItem, ListItemIcon, ListItemText, useTheme } from '@mui/
 import { IconSettingsCog, IconUserEdit, IconBrandBluesky, IconUsersGroup } from '@tabler/icons-react'
 import { useFrappeGetDoc } from 'frappe-react-sdk';
 
-const SettingsSidebar = () => {
+const SettingsSidebar = ({setViewSetting, isDesktop}) => {
     const dispatch = useDispatch();
     const theme = useTheme();
     const primaryColor = theme.palette.primary.main;
@@ -15,6 +15,7 @@ const SettingsSidebar = () => {
     const { data: agentData } = useFrappeGetDoc("Agent Profile", agent.agentEmail);
 
     const handleClick = (option) => {
+        setViewSetting("settings")
         dispatch(setCurrentSettingChoice(option)); // Dispatch the action
     };
 
@@ -27,7 +28,7 @@ const SettingsSidebar = () => {
     if (agentData && agentData.is_admin) options.push({ name: "Agents", icon: <IconUsersGroup /> });
 
     return (
-        <Box sx={{ width: '25%', backgroundColor: '#f4f4f4', padding: '20px', display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ width: isDesktop ? '25%' : '100%', backgroundColor: '#f4f4f4', padding: '20px', display: 'flex', flexDirection: 'column' }}>
             <h3>Settings</h3>
             <List sx={{ padding: 0 }}>
                 {options.map((option) => (

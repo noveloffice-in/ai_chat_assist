@@ -9,21 +9,23 @@ import { setAgentAvailability } from '../../../store/slices/AgentSlice';
 
 export default function Available() {
 
-    const [available, setAvailable] = useState(false);
     const agentDetails = useSelector((state) => state.agentReducer);
+    console.log("agentDetails.isAvailable", agentDetails.isAvailable);
+    const [available, setAvailable] = useState(agentDetails.isAvailable ? agentDetails.isAvailable : false);
     const dispatch = useDispatch();
 
     const { updateDoc } = useFrappeUpdateDoc();
 
     const updateAvailability = useCallback(
         debounce(async (status) => {
-            updateDoc("Agent Profile", agentDetails.agentEmail, { is_available: status })
-                .then((res) => {
-                    console.log("res = ", res);
-                })
-                .catch((err) => {
-                    console.log("Error = ", err);
-                })
+            updateDoc("Agent Profile", agentDetails.agentEmail, {is_available : status})
+            .then((res)=>{
+                console.log("res = ", res);
+                dispatch(setAgentAvailability(status));
+            })
+            .catch((err)=>{
+                console.log("Error = ", err);
+            })
             console.log("Updating API with status:", status);
         }, 1000),
         []

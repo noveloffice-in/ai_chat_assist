@@ -1,17 +1,26 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel, Stack, Badge, Tooltip } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useDispatch, useSelector } from "react-redux";
 import { useFrappeGetDoc, useFrappeUpdateDoc } from "frappe-react-sdk";
 import { debounce } from "lodash";
 import { setSessionID } from "../../store/slices/CurrentSessionSlice"
 import arrowImage from '../../assets/images/products/arrow.png'
 import AlertDialog from "../../layouts/full/shared/dialog/AlertDialog";
+import Typing from "./Typing"
 
-import dayjs from "dayjs";
-import Typing from "./Typing";
-import { setAgentAvailability } from "../../store/slices/AgentSlice";
-
-const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList }) => {
+/**
+ * Chat component for handling chat sessions and messages.
+ * 
+ * @param {Object} props - Component props.
+ * @param {Object} props.socketData - Data from the socket.
+ * @param {Object} props.socket - Socket connection.
+ * @param {Function} props.setRefreshSessionList - Function to refresh the session list.
+ * @param {boolean} props.refreshSessionList - Flag to refresh the session list.
+ * @param {Function} props.setView - Function to set the current view.
+ * @param {boolean} props.isDesktop - Flag indicating if the view is desktop.
+ */
+const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, setView, isDesktop }) => {
     const sessionID = useSelector(
         (state) => state.currentSessionReducer.sessionID
     );
@@ -35,6 +44,9 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     const primaryColor = theme.palette.primary.main;
     const badgeBackground = theme.palette.primary[700];
 
+    const HandleView = (item) => {
+        setView(item);
+    }
 
     let title = "Do you want to claim this chat?";
 
@@ -66,6 +78,11 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     ];
 
 
+    /**
+     * Update the availability status of the agent.
+     * 
+     * @param {boolean} status - The new availability status.
+     */
     const updateAvailability = useCallback(
         debounce(async (status) => {
             try {
@@ -126,6 +143,11 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
         }
     }, [socketData]);
 
+    /**
+     * Handle assigned user details from the socket.
+     * 
+     * @param {Object} data - The data received from the socket.
+     */
     const handleAssignedUserDetails = (data) => {
         if (data.assignedUser === agent.agentEmail) {
             // Automatically send the message
@@ -134,7 +156,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             // Ask for permission to send the message
             setInputMessage(data.message);
             setDialogMessage(`This chat is being handled by ${data.assignedUser}. 
-                If you click "Yes" then it will be assigned to you`)
+                If you click "Yes" then it will be assigned to you`);
             setShowDialog(true);
         }
     };
@@ -289,7 +311,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             {/* Chat Header */}
             <Box
                 sx={{
-                    padding: "0.3rem 2rem",
+                    padding: isDesktop ? "0.3rem 2rem" : "0.3rem 1rem",
                     borderBottom: '1px solid #ddd',
                     position: 'sticky',
                     top: 0,
@@ -299,8 +321,26 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                     alignItems: 'center',
                 }}
             >
-                <Stack flexDirection="row">
-                    <Typography variant="h6">{data && data.visitor_name ? data.visitor_name : sessionID}</Typography>
+                <Stack flexDirection="row" alignItems={'center'}>
+                    {/* Arrow for smaller devices*/}
+                    {!isDesktop &&
+                        <ArrowBackIcon
+                            onClick={() => HandleView("list")}
+                            sx={{ mr: 2 }}
+                        />}
+                    <Typography
+                        variant="h6"
+                        bgcolor={isDesktop ? "#fff" : badgeBackground}
+                        color={isDesktop ? "#000000" : "#ffffff"}
+                        width={isDesktop ? "200px" : "90px"}
+                        overflow={'hidden'}
+                        textOverflow={"ellipsis"}
+                        sx={{ borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
+                        onClick={() => HandleView("details")}
+                    >
+                        {data && data.visitor_name ? data.visitor_name : sessionID}
+                    </Typography>
+
                     {data && data.current_user &&
                         <Tooltip
                             title="Assigned To"
@@ -309,7 +349,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                             disableInteractive
                         >
                             <Badge
-                                sx={{ ml: 1, bgcolor: badgeBackground, color: "#fff", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
+                                sx={{ ml: 1, bgcolor: isDesktop ? badgeBackground : "#fff", color: isDesktop ? "#fff" : "#000000", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
                             >
                                 <span>{data.current_user}</span>
                             </Badge>
@@ -346,124 +386,37 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                         No messages yet...
                     </Typography>
                 ) : (
-                    (() => {
-                        let lastDate = null;
-
-                        return messages.map((message, index) => {
-                            const messageDate = dayjs(message.time_stamp).format("YYYY-MM-DD");
-                            const messageTime = dayjs(message.time_stamp).format("hh:mm A"); // WhatsApp-style time
-
-                            let showDateHeader = lastDate !== messageDate;
-                            lastDate = messageDate;
-
-                            return (
-                                <React.Fragment key={index}>
-                                    {/* Date Tag (only once per day) */}
-                                    {showDateHeader && (
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                width: "100%",
-                                                my: 1
-                                            }}
-                                        >
-                                            <Typography
-                                                sx={{
-                                                    backgroundColor: "#d3d3d3",
-                                                    color: "#333",
-                                                    padding: "0px 8px",
-                                                    borderRadius: "16px",
-                                                    fontSize: "0.7rem",
-                                                    fontWeight: "300",
-                                                    textAlign: "center"
-                                                }}
-                                            >
-                                                {dayjs(message.time_stamp).format("MMMM D, YYYY")}
-                                                {message.message_type === "Activity" && ` - ${message.message}`}
-                                            </Typography>
-                                        </Box>
-                                    )}
-
-                                    {/* Activity Message */}
-                                    {message.message_type === "Activity" && !showDateHeader && (
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                width: "100%",
-                                                my: 1
-                                            }}
-                                        >
-                                            <Typography
-                                                sx={{
-                                                    backgroundColor: "#d3d3d3",
-                                                    color: "#333",
-                                                    padding: "0px 8px",
-                                                    borderRadius: "16px",
-                                                    fontSize: "0.7rem",
-                                                    fontWeight: "300",
-                                                    textAlign: "center"
-                                                }}
-                                            >
-                                                {message.message}
-                                            </Typography>
-                                        </Box>
-                                    )}
-
-                                    {/* Regular Chat Message */}
-                                    {message.message_type === "Message" && (
-                                        <Box
-                                            sx={{
-                                                alignSelf: message.user === "Guest" ? "flex-start" : "flex-end",
-                                                backgroundColor: message.user === "Guest" ? "#f0f0f0" : primaryColor,
-                                                color: message.user === "Guest" ? "#000" : "#fff",
-                                                padding: 1,
-                                                borderRadius: 1,
-                                                maxWidth: "70%",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                position: "relative",
-                                                wordBreak: "break-word",
-                                                whiteSpace: 'pre-wrap',
-                                                overflowWrap: 'break-word',
-                                            }}
-                                        >
-                                            {message.user !== "Guest" && (
-                                                <Typography
-                                                    variant="caption"
-                                                    sx={{
-                                                        color: message.user === "Guest" ? "#666" : "#fff",
-                                                        opacity: 0.7,
-                                                        fontSize: "0.7rem"
-                                                    }}
-                                                >
-                                                    {message.user}
-                                                </Typography>
-                                            )}
-                                            <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-                                                {message.message}
-                                            </Typography>
-                                            {/* Time Stamp */}
-                                            <Typography
-                                                variant="caption"
-                                                sx={{
-                                                    alignSelf: "flex-end",
-                                                    fontSize: "0.7rem",
-                                                    opacity: 0.7,
-                                                    marginTop: "2px"
-                                                }}
-                                            >
-                                                {messageTime}
-                                            </Typography>
-                                        </Box>
-                                    )}
-                                </React.Fragment>
-                            );
-                        });
-                    })()
+                    messages.map((message, index) => (
+                        <Box
+                            key={index}
+                            sx={{
+                                alignSelf:
+                                    message.user === "Guest"
+                                        ? "flex-start"
+                                        : "flex-end",
+                                backgroundColor:
+                                    message.user === "Guest"
+                                        ? "#f0f0f0"
+                                        : primaryColor,
+                                color:
+                                    message.user === "Guest" ? "#000" : "#fff",
+                                padding: 1,
+                                borderRadius: 1,
+                                maxWidth: "70%",
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                {message.user !== "Guest" && (
+                                    <Typography variant="caption" sx={{ color: message.user === "Guest" ? '#666' : '#fff', opacity: 0.7, fontSize: '0.7rem' }}>
+                                        {message.user}
+                                    </Typography>
+                                )}
+                                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', wordBreak: "break-all" }}>
+                                    {message.message}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    ))
                 )}
                 {/* Scroll to bottom */}
                 <div ref={chatEndRef} />

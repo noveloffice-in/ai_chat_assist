@@ -70,7 +70,11 @@ export default function General() {
         {
           themeButtons.map((theme) => {
             return (
-              <Button variant="contained" onClick={() => handleThemeChange(theme.name.toLocaleLowerCase())} style={{ backgroundColor: `${theme.color}` }}>
+              <Button variant="contained"
+                key={theme.name}
+                onClick={() => handleThemeChange(theme.name.toLocaleLowerCase())}
+                style={{ backgroundColor: `${theme.color}` }}
+              >
                 {theme.name}
               </Button>
             )
