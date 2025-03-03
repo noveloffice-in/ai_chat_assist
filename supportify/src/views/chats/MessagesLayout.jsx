@@ -68,14 +68,14 @@ const MessagesLayout = () => {
         <Box sx={{ display: "flex", height: 'calc(100vh - 75px)' }}>
             {/* Sidebar: SessionList */}
             {showSessionList && (
-                <Box sx={{ width: { xs: "100%", md: "22%" }, border: 1, borderColor: "divider", overflowY: "auto" }}>
+                <Box sx={{ width: { xs: "100%", md: "22%" }, border: 1, borderColor: "divider", overflowY: "hidden" }}>
                     <SessionList socketData={socketData} refreshSessionList={refreshSessionList} setView={setView} />
                 </Box>
             )}
 
             {/* Chat Section */}
             {showChat && (
-                <Box sx={{ width: isDesktop ? "53%" : "100%", border: 1, borderColor: "divider", display: "flex", flexDirection: "column" }}>
+                <Box sx={{ width: isDesktop ? "53%" : "100vw", border: 1, borderColor: "divider", display: "flex", flexDirection: "column" }}>
                     <Chat
                         socketData={socketData}
                         socket={socket}

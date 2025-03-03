@@ -49,7 +49,6 @@ const Login = () => {
             })
             .catch((err) => {
                 notifyError(err.message);
-                console.log(err);
             });
     };
 

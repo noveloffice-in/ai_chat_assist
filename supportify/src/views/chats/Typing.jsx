@@ -9,16 +9,17 @@ const typingAnimation = `
   }
 `;
 
-export default function Typing({ socket }) {
+export default function Typing({ socket, sessionID }) {
     const [typingMessage, setTypingMessage] = useState("");
 
     useEffect(() => {
-        socket.on("guestTyping", (data) => { setTypingMessage(data.msg) });
+        socket.on("guestTyping", (data) => { if(sessionID === data.room) setTypingMessage(data.msg) });
 
         return () => {
+            setTypingMessage("");
             socket.off("guestTyping");
         };
-    }, []);
+    }, [sessionID]);
 
     return (
         <>

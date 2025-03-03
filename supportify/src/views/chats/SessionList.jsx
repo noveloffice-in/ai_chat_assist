@@ -148,7 +148,7 @@ const SessionList = ({ socketData, refreshSessionList, setView }) => {
             </Tabs>
 
             {/* Scrollable Session List */}
-            <Scrollbar sx={{ height: "650px", maxHeight: "800px" }}>
+            <Scrollbar sx={{ maxHeight: "500px" }}>
                 <List>
                     {sessions.length > 0 &&
                         sessions.map((session, index) => (
@@ -169,7 +169,7 @@ const SessionList = ({ socketData, refreshSessionList, setView }) => {
                                         <Typography
                                             variant="body2"
                                             color="textSecondary"
-                                            sx={{ fontWeight: session.last_message_by === "Guest" ? "bold" : "normal" }}
+                                            fontWeight= {session.last_message_by === "Guest" ? "bold" : "normal"}
                                         >
                                             {session.last_message_by && `${session.last_message_by}: `}
                                             {session.last_message.length > 20
@@ -179,15 +179,17 @@ const SessionList = ({ socketData, refreshSessionList, setView }) => {
                                     )}
 
                                     {/* Agent Name Chip */}
-                                    {session.agent_name && (
-                                        <Chip
-                                            sx={{ height: "1.1rem" }}
-                                            label={session.agent_name}
-                                            size="small"
-                                            color="primary"
-                                            variant="outlined"
-                                        />
-                                    )}
+                                    <Box>
+                                        {session.agent_name && (
+                                            <Chip
+                                                sx={{ height: "1.1rem" }}
+                                                label={session.agent_name}
+                                                size="small"
+                                                color="primary"
+                                                variant="outlined"
+                                            />
+                                        )}
+                                    </Box>
                                 </Stack>
 
                                 {/* Right Section: Time & Badge */}
@@ -205,7 +207,7 @@ const SessionList = ({ socketData, refreshSessionList, setView }) => {
 
                                     {/* Red Badge for Unread Messages */}
                                     {session.last_message_by === "Guest" && (
-                                        <Badge badgeContent={""} color="error" sx={{ marginTop: "auto" }} />
+                                        <Badge badgeContent={"1"} color="error" sx={{ marginTop: "auto" }} />
                                     )}
                                 </Stack>
                             </ListItem>

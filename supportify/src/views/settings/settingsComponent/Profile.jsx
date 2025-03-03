@@ -47,7 +47,6 @@ export default function Profile() {
     // Handle Save button click
     const handleSave = async () => {
         // Simulate saving data
-        console.log('Saved data:', formData);
         const response = await updateDoc("Agent Profile", agentDetails.agentEmail, { "agent_name": formData.agentName, "agent_display_name": formData.agentDisplayName });
         if (response) {
             dispatch(setAgentName(response.agent_name));
@@ -81,7 +80,7 @@ export default function Profile() {
                             label="Agent Name"
                             name="agentName"
                             value={formData.agentName}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
                             variant="outlined"
                             size="small"
                         />

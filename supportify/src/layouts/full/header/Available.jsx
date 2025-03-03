@@ -10,7 +10,6 @@ import { setAgentAvailability } from '../../../store/slices/AgentSlice';
 export default function Available() {
 
     const agentDetails = useSelector((state) => state.agentReducer);
-    console.log("agentDetails.isAvailable", agentDetails.isAvailable);
     const [available, setAvailable] = useState(agentDetails.isAvailable ? agentDetails.isAvailable : false);
     const dispatch = useDispatch();
 
@@ -18,15 +17,13 @@ export default function Available() {
 
     const updateAvailability = useCallback(
         debounce(async (status) => {
-            updateDoc("Agent Profile", agentDetails.agentEmail, {is_available : status})
-            .then((res)=>{
-                console.log("res = ", res);
-                dispatch(setAgentAvailability(status));
-            })
-            .catch((err)=>{
-                console.log("Error = ", err);
-            })
-            console.log("Updating API with status:", status);
+            updateDoc("Agent Profile", agentDetails.agentEmail, { is_available: status })
+                .then((res) => {
+                    dispatch(setAgentAvailability(status));
+                })
+                .catch((err) => {
+                    console.log("Error = ", err);
+                });
         }, 1000),
         []
     );
@@ -69,6 +66,9 @@ export default function Available() {
     }
 
     return (
-        <GreenSwitch {...label} checked={available} onChange={handleCheck} />
+        <>
+            <label>Available</label>
+            <GreenSwitch {...label} checked={available} onChange={handleCheck} />
+        </>
     );
 }
