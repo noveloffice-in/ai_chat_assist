@@ -11,6 +11,7 @@
   "visitor_name",
   "column_break_dujw",
   "resolved",
+  "tags",
   "section_break_khmi",
   "messages",
   "section_break_fxyu",
@@ -129,11 +130,17 @@
    "fieldname": "last_message_at",
    "fieldtype": "Data",
    "label": "Last Message At"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Small Text",
+   "label": "Tags",
+   "max_height": "4rem"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-25 10:07:38.385518",
+ "modified": "2025-03-05 15:12:45.425265",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Session Details",

@@ -211,7 +211,7 @@ export default function Agents({isDesktop}) {
                       {agent.agent_name}
                     </Stack>
                   </TableCell>
-                  <TableCell>{agent.agent_display_name || "N/A"}</TableCell>
+                  <TableCell>{agent.agent_display_name || "-"}</TableCell>
                   <TableCell>
                     <Switch
                       checked={!!agent.is_available}

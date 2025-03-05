@@ -34,6 +34,11 @@ export default function Tags() {
       toast.error('Tag name is required.');
       return;
     }
+    
+    if (newTag.name.includes(',')) {
+      toast.error('Tag name should not contain comma(,).');
+      return;
+    }
 
     createDoc("Tags", { "tag": newTag.name, "description": newTag.description })
       .then((res) => {
