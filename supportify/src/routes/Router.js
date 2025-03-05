@@ -12,7 +12,7 @@ const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')))
 const Dashboard = Loadable(lazy(() => import('../views/dashboard/Dashboard')))
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 const Login = Loadable(lazy(() => import('../views/authentication/Login')));
-const MessagesLayout = Loadable(lazy(() => import('../views/chats/MessagesLayout')));
+const MessagesLayout = Loadable(lazy(() => import('../views/messageTab/MessagesLayout')));
 const SettingsLayout = Loadable(lazy(() => import('../views/settings/SettingsLayout')));
 
 // import LoginPage from 'src/devComponents/login/LoginPage';

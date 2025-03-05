@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentSettingChoice } from '../../store/slices/SettingSlice';
 import { Box, List, ListItem, ListItemIcon, ListItemText, useTheme } from '@mui/material';
-import { IconSettingsCog, IconUserEdit, IconBrandBluesky, IconUsersGroup } from '@tabler/icons-react'
+import { IconSettingsCog, IconUserEdit, IconBrandBluesky, IconUsersGroup, IconTags } from '@tabler/icons-react'
 import { useFrappeGetDoc } from 'frappe-react-sdk';
+import { setAgentAdminStatus } from '../../store/slices/AgentSlice';
 
-const SettingsSidebar = ({setViewSetting, isDesktop}) => {
+const SettingsSidebar = ({ setViewSetting, isDesktop }) => {
     const dispatch = useDispatch();
     const theme = useTheme();
     const primaryColor = theme.palette.primary.main;
@@ -19,13 +20,20 @@ const SettingsSidebar = ({setViewSetting, isDesktop}) => {
         dispatch(setCurrentSettingChoice(option)); // Dispatch the action
     };
 
+    useEffect(() => {
+        if (agentData && agentData.is_admin !== agent.isAdmin) dispatch(setAgentAdminStatus(Boolean(agentData.is_admin)));
+    })
+
     const options = [
         { name: "Profile", icon: <IconUserEdit /> },
-        { name: "Account", icon: <IconSettingsCog /> },
+        { name: "Shortcuts", icon: <IconSettingsCog /> },
         { name: "General", icon: <IconBrandBluesky /> },
     ];
 
-    if (agentData && agentData.is_admin) options.push({ name: "Agents", icon: <IconUsersGroup /> });
+    if (agentData && agentData.is_admin) {
+        options.push({ name: "Agents", icon: <IconUsersGroup /> });
+        options.push({ name: "Tags", icon: <IconTags /> });
+    }
 
     return (
         <Box sx={{ width: isDesktop ? '25%' : '100%', backgroundColor: '#f4f4f4', padding: '20px', display: 'flex', flexDirection: 'column' }}>

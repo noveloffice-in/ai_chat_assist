@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, useMediaQuery } from "@mui/material";
-import SessionList from "./SessionList";
-import Chat from "./Chat";
-import Details from "./Details";
+import SessionList from "./session/SessionList";
+import Chat from "./chats/Chat";
+import Details from "./details/Details";
 // Utilities
 import getSocketObj from "../../utilities/getSocket";
 import showNotification from "../../utilities/notification";
@@ -14,7 +14,7 @@ import showNotification from "../../utilities/notification";
  * @component
  * @returns {JSX.Element} The rendered MessagesLayout component.
  */
-const MessagesLayout = () => {
+export default function MessagesLayout() {
     const socket = getSocketObj();
     const [socketData, setSocketData] = useState({});
     const [refreshSessionList, setRefreshSessionList] = useState(false);
@@ -96,5 +96,3 @@ const MessagesLayout = () => {
         </Box>
     );
 };
-
-export default MessagesLayout;

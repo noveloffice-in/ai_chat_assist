@@ -25,7 +25,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { debounce } from "lodash";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import PersonIcon from '@mui/icons-material/Person';
-import AlertDialog from "../../../layouts/full/shared/dialog/AlertDialog";
+import AlertDialog from "../../../../layouts/full/shared/dialog/AlertDialog";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
 

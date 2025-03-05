@@ -30,7 +30,7 @@ const Scrollbar = (props) => {
 
     // Render a Box with overflowX: auto for mobile devices
     if (isMobile) {
-        return <Box sx={{ overflowX: 'auto' }}>{children}</Box>;
+        return <SimpleBarStyle sx={{ ...sx, overflowX: 'auto' }} {...other}>{children}</SimpleBarStyle>;
     }
 
     // Render the SimpleBar component with custom styles for non-mobile devices

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Grid } from '@mui/material';
 import { useFrappeGetDoc, useFrappeUpdateDoc } from 'frappe-react-sdk';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAgentDisplayName, setAgentName } from '../../../store/slices/AgentSlice';
+import { setAgentDisplayName, setAgentName } from '../../../../store/slices/AgentSlice';
 
 export default function Profile() {
     const agentDetails = useSelector((state) => state.agentReducer);

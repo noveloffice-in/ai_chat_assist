@@ -4,20 +4,17 @@ import {
     Tabs,
     Tab,
     List,
-    ListItem,
-    Typography,
-    Badge,
     useTheme,
-    Chip,
-    Stack,
+    Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setSessionID } from "../../store/slices/CurrentSessionSlice";
+import { setSessionID } from "../../../store/slices/CurrentSessionSlice";
 import { useFrappeGetDocList } from "frappe-react-sdk";
-import Scrollbar from "../../components/custom-scroll/Scrollbar";
+import Scrollbar from "../../../components/custom-scroll/Scrollbar";
 
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
+import RenderSessionList from "./RenderSessionList";
 dayjs.extend(isToday);
 
 /**
@@ -107,6 +104,7 @@ const SessionList = ({ socketData, refreshSessionList, setView }) => {
 
     return (
         <Box>
+
             {/* Main Tabs */}
             <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth">
                 <Tab label="Open" value="open" />
@@ -150,68 +148,16 @@ const SessionList = ({ socketData, refreshSessionList, setView }) => {
             {/* Scrollable Session List */}
             <Scrollbar sx={{ maxHeight: "500px" }}>
                 <List>
-                    {sessions.length > 0 &&
-                        sessions.map((session, index) => (
-                            <ListItem
-                                button
-                                key={index}
-                                onClick={() => handleSessionClick(session.name)}
-                                sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                            >
-                                {/* Left Section: Visitor Name */}
-                                <Stack gap={0.5} justifyContent="center">
-                                    <Typography variant="body1" fontWeight="bold">
-                                        {session.visitor_name || session.name}
-                                    </Typography>
-
-                                    {/* Last Message */}
-                                    {session.last_message && (
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            fontWeight= {session.last_message_by === "Guest" ? "bold" : "normal"}
-                                        >
-                                            {session.last_message_by && `${session.last_message_by}: `}
-                                            {session.last_message.length > 20
-                                                ? `${session.last_message.substring(0, 20)}...`
-                                                : session.last_message}
-                                        </Typography>
-                                    )}
-
-                                    {/* Agent Name Chip */}
-                                    <Box>
-                                        {session.agent_name && (
-                                            <Chip
-                                                sx={{ height: "1.1rem" }}
-                                                label={session.agent_name}
-                                                size="small"
-                                                color="primary"
-                                                variant="outlined"
-                                            />
-                                        )}
-                                    </Box>
-                                </Stack>
-
-                                {/* Right Section: Time & Badge */}
-                                <Stack minHeight="2rem" alignItems="flex-end" justifyContent="space-between">
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ fontWeight: session.last_message_by === "Guest" ? "bold" : "normal" }}
-                                    >
-                                        {session.last_message_at
-                                            ? dayjs(session.last_message_at).isToday()
-                                                ? dayjs(session.last_message_at).format("h:mm A")
-                                                : dayjs(session.last_message_at).format("ddd")
-                                            : ""}
-                                    </Typography>
-
-                                    {/* Red Badge for Unread Messages */}
-                                    {session.last_message_by === "Guest" && (
-                                        <Badge badgeContent={"1"} color="error" sx={{ marginTop: "auto" }} />
-                                    )}
-                                </Stack>
-                            </ListItem>
-                        ))}
+                    {sessions.length ?
+                        <RenderSessionList
+                            sessions={sessions}
+                            handleSessionClick={handleSessionClick}
+                        />
+                        :
+                        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "500px" }}>
+                            <Typography variant="h5">No sessions found.</Typography>
+                        </Box>
+                    }
                 </List>
             </Scrollbar>
         </Box>

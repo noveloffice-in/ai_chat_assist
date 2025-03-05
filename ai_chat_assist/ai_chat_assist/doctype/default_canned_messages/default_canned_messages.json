@@ -1,0 +1,41 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-05 10:11:25.279910",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "canned_messages"
+ ],
+ "fields": [
+  {
+   "fieldname": "canned_messages",
+   "fieldtype": "Table",
+   "label": "Canned Messages",
+   "options": "Canned Messages"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-03-05 10:12:00.334436",
+ "modified_by": "Administrator",
+ "module": "AI Chat Assist",
+ "name": "Default Canned Messages",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
