@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button, Typography } from '@mui/material';
+import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button, Typography, useMediaQuery } from '@mui/material';
 import PropTypes from 'prop-types';
 
 // components
@@ -12,17 +12,19 @@ const Header = (props) => {
 
   // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
-
+  const isDesktop = useMediaQuery("(min-width:900px)")
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none',
     background: theme.palette.background.paper,
     justifyContent: 'center',
     backdropFilter: 'blur(4px)',
+    height: isDesktop ? '2rem' : '4rem',
     [theme.breakpoints.up('lg')]: {
-      minHeight: '60px',
+      minHeight: '38px',
     },
   }));
+
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     width: '100%',
     color: theme.palette.text.secondary,
@@ -47,7 +49,7 @@ const Header = (props) => {
 
         <Box flexGrow={1} sx={{ display: 'flex', alignItems: 'center' }}>
           {/* <img src={logo} alt="Supportify Logo" style={{ height: '40px', marginRight: '10px' }} /> */}
-          <Typography variant='h2'>
+          <Typography variant='h2' sx={{ fontSize: isDesktop ? '20px' : "16px" }}>
             Supportify
           </Typography>
         </Box>

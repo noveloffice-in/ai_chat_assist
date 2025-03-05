@@ -15,8 +15,8 @@ import Cookies from 'js-cookie';
 import { IconListCheck, IconMail, IconUser } from '@tabler/icons-react';
 
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
-import { useFrappeAuth } from 'frappe-react-sdk';
-import { useDispatch } from 'react-redux';
+import { useFrappeAuth, useFrappeUpdateDoc } from 'frappe-react-sdk';
+import { useDispatch, useSelector } from 'react-redux';
 import { resetCurrentSessionState } from '../../../store/slices/CurrentSessionSlice';
 import { setCurrentSettingChoice, resetTheme } from '../../../store/slices/SettingSlice';
 
@@ -37,6 +37,10 @@ const Profile = () => {
 
   const dispatch = useDispatch();
 
+  const { updateDoc } = useFrappeUpdateDoc();
+
+  const agentDetails = useSelector((state) => state.agentReducer);
+
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
@@ -46,11 +50,12 @@ const Profile = () => {
   };
 
   const handleLogout = () => {
-    logout();
+    updateDoc("Agent Profile", agentDetails.agentEmail, { is_available: 0 })
     Cookies.remove(getUserCookie);
     localStorage.clear();
     dispatch(resetCurrentSessionState());
     dispatch(resetTheme());
+    logout();
     setTimeout(() => {
       navigate("/login");
       //,uncomment this if you want permissions to apply without user refresh

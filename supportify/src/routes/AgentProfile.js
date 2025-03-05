@@ -62,7 +62,7 @@ export default function AgentProfile(props) {
                 })
                 .catch((err) => {
                     console.log(err);
-                })
+                });
         }
     }, [currentUser]);
 

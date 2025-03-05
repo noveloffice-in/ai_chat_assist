@@ -5,10 +5,10 @@ import AddIcon from '@mui/icons-material/Add';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useFrappePostCall } from 'frappe-react-sdk';
-import { useDispatch } from 'react-redux';
-import { setCannedMessages as setCannedMessagesAction } from '../../../store/slices/AgentSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCannedMessages as setCannedMessagesAction } from '../../../../store/slices/AgentSlice';
 
-export default function Account() {
+export default function CannedMessages({ doctype }) {
   const [cannedMessages, setCannedMessages] = useState([]);
   const [disableSave, setDisableSave] = useState(true);
   const dispatch = useDispatch();
@@ -16,8 +16,13 @@ export default function Account() {
   const { call, result } = useFrappePostCall("ai_chat_assist.api.supportify.agent.add_canned_messages");
   const { call: getCannedMessages } = useFrappePostCall("ai_chat_assist.api.supportify.agent.get_canned_messages");
 
+  const agent = useSelector((state) => state.agentReducer);
+  let isAllowedToEdit = agent.isAdmin;
+  
+  if(doctype === 'personal') isAllowedToEdit = true;
+
   useEffect(() => {
-    getCannedMessages()
+    getCannedMessages({ doctype: doctype })
       .then((res) => {
         if (res.message.length === 0) {
           setDisableSave(true);
@@ -29,7 +34,7 @@ export default function Account() {
       .catch((err) => {
         console.error("Error fetching canned messages:", err);
       });
-  }, [result]);
+  }, [result, doctype]);
 
   const handleAddRow = () => {
     if (cannedMessages.length >= 10) {
@@ -55,19 +60,24 @@ export default function Account() {
   };
 
   const handleSave = () => {
+    let isValid = true;
     const validMessages = cannedMessages.filter(msg => {
       if (msg.hotWord.length < 3 || msg.hotWord.length > 8 || msg.hotWord.includes(' ')) {
         toast.error('Hot Word must be between 3 and 8 characters and cannot contain spaces.');
+        isValid = false;
         return false;
       }
       if (msg.message.trim() === '') {
         toast.error('Message cannot be empty.');
+        isValid = false;
         return false;
       }
       return true;
     });
 
-    call({ hot_word_and_messages: validMessages })
+    if (!isValid || validMessages.length === 0) return;
+
+    call({ hot_word_and_messages: validMessages, doctype: doctype })
       .then((res) => {
         if (res.message === "success") {
           toast.success('Canned messages saved successfully!');
@@ -84,7 +94,7 @@ export default function Account() {
   return (
     <Paper elevation={5} sx={{ padding: 3, borderRadius: 2 }}>
       <Typography variant="h4" gutterBottom>
-        Canned Messages
+        {doctype === "personal" ? "Personal" : "Team"} Canned Messages
       </Typography>
       {cannedMessages.map((item, index) => (
         <Box key={index} sx={{ marginBottom: 2 }}>
@@ -114,22 +124,22 @@ export default function Account() {
                 sx={{ resize: 'vertical' }}
               />
             </Grid>
-            <Grid item xs={2}>
+            {isAllowedToEdit && <Grid item xs={2}>
               <IconButton color="error" onClick={() => handleRemoveRow(index)}>
                 <DeleteIcon />
               </IconButton>
-            </Grid>
+            </Grid>}
           </Grid>
         </Box>
       ))}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2, marginRight: 12 }}>
+      {isAllowedToEdit && <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2, marginRight: 12 }}>
         <Button variant="contained" color="primary" onClick={handleAddRow} disabled={cannedMessages.length >= 10}>
           <AddIcon /> Add Row
         </Button>
         <Button variant="contained" color="success" onClick={handleSave} disabled={disableSave}>
           Save
         </Button>
-      </Box>
+      </Box>}
       <ToastContainer />
     </Paper>
   );

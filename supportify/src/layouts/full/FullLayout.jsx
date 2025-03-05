@@ -7,7 +7,6 @@ import Sidebar from "./sidebar/Sidebar";
 import getSocketObj from "../../utilities/getSocket";
 import { useSelector } from "react-redux";
 
-
 const MainWrapper = styled("div")(() => ({
     display: "flex",
     minHeight: "100vh",
@@ -32,46 +31,46 @@ const FullLayout = () => {
     socket.emit("join_room", { room: agentEmail, username: "Guest" });
 
     return (
-            <MainWrapper className="mainwrapper">
+        <MainWrapper className="mainwrapper">
+            {/* ------------------------------------------- */}
+            {/* Sidebar */}
+            {/* ------------------------------------------- */}
+            <Sidebar
+                isSidebarOpen={isSidebarOpen}
+                isMobileSidebarOpen={isMobileSidebarOpen}
+                onSidebarClose={() => setMobileSidebarOpen(false)}
+            />
+            {/* ------------------------------------------- */}
+            {/* Main Wrapper */}
+            {/* ------------------------------------------- */}
+            <PageWrapper className="page-wrapper">
                 {/* ------------------------------------------- */}
-                {/* Sidebar */}
+                {/* Header */}
                 {/* ------------------------------------------- */}
-                <Sidebar
-                    isSidebarOpen={isSidebarOpen}
-                    isMobileSidebarOpen={isMobileSidebarOpen}
-                    onSidebarClose={() => setMobileSidebarOpen(false)}
+                <Header
+                    toggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
+                    toggleMobileSidebar={() => setMobileSidebarOpen(true)}
                 />
                 {/* ------------------------------------------- */}
-                {/* Main Wrapper */}
+                {/* PageContent */}
                 {/* ------------------------------------------- */}
-                <PageWrapper className="page-wrapper">
+                <Box
+                // sx={{
+                //     paddingTop: "10px",
+                // }}
+                >
                     {/* ------------------------------------------- */}
-                    {/* Header */}
+                    {/* Page Route */}
                     {/* ------------------------------------------- */}
-                    <Header
-                        toggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
-                        toggleMobileSidebar={() => setMobileSidebarOpen(true)}
-                    />
-                    {/* ------------------------------------------- */}
-                    {/* PageContent */}
-                    {/* ------------------------------------------- */}
-                    <Box
-                        sx={{
-                            paddingTop: "10px",
-                        }}
-                    >
-                        {/* ------------------------------------------- */}
-                        {/* Page Route */}
-                        {/* ------------------------------------------- */}
-                        <Box sx={{ minHeight: "calc(100vh - 170px)" }}>
-                            <Outlet />
-                        </Box>
-                        {/* ------------------------------------------- */}
-                        {/* End Page */}
-                        {/* ------------------------------------------- */}
+                    <Box sx={{ minHeight: "calc(100vh - 170px)" }}>
+                        <Outlet />
                     </Box>
-                </PageWrapper>
-            </MainWrapper>
+                    {/* ------------------------------------------- */}
+                    {/* End Page */}
+                    {/* ------------------------------------------- */}
+                </Box>
+            </PageWrapper>
+        </MainWrapper>
     );
 };
 

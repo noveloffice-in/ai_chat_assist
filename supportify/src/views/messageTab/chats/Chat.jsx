@@ -1,36 +1,47 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Typography, TextField, Button, Skeleton, useTheme, Checkbox, FormControlLabel, Stack, Badge, Tooltip } from "@mui/material";
+import { Box, Typography, TextField, Button, Stack, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useFrappeGetDoc, useFrappeUpdateDoc } from "frappe-react-sdk";
 import { debounce } from "lodash";
-import { setSessionID } from "../../store/slices/CurrentSessionSlice"
-import arrowImage from '../../assets/images/products/arrow.png'
-import AlertDialog from "../../layouts/full/shared/dialog/AlertDialog";
+import arrowImage from '../../../assets/images/products/arrow.png'
+import Typing from "./Typing"
+import RenderMessages from "./RenderMessages";
+import { setSessionID } from "../../../store/slices/CurrentSessionSlice";
+import AlertDialog from "../../../layouts/full/shared/dialog/AlertDialog";
+import { setAgentAvailability } from "../../../store/slices/AgentSlice";
+import ChatHeader from "./ChatHeader";
+import AgentTyping from "./AgentTyping";
 
-const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList }) => {
+/**
+ * Chat component for handling chat sessions and messages.
+ * 
+ * @param {Object} props - Component props.
+ * @param {Object} props.socketData - Data from the socket.
+ * @param {Object} props.socket - Socket connection.
+ * @param {Function} props.setRefreshSessionList - Function to refresh the session list.
+ * @param {boolean} props.refreshSessionList - Flag to refresh the session list.
+ * @param {Function} props.setView - Function to set the current view.
+ */
+const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, setView }) => {
     const sessionID = useSelector(
         (state) => state.currentSessionReducer.sessionID
     );
     const agent = useSelector((state) => state.agentReducer);
 
     const [messages, setMessages] = useState([]);
-    const [isResolved, setIsResolved] = useState(false);
     const [showDialog, setShowDialog] = useState(false);
     const [inputMessage, setInputMessage] = useState("");
     const [dialogMessage, setDialogMessage] = useState("-----");
     const [suggestedMessages, setSuggestedMessages] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [isScrollToBottom, setIsScrollToBottom] = useState(false);
 
     const { data, error, mutate } = useFrappeGetDoc("Session Details", sessionID);
     const { updateDoc } = useFrappeUpdateDoc();
 
-    const theme = useTheme();
     const dispatch = useDispatch();
+    const theme = useTheme();
     const chatEndRef = useRef(null);
-
-    const primaryColor = theme.palette.primary.main;
-    const badgeBackground = theme.palette.primary[700];
-
 
     let title = "Do you want to claim this chat?";
 
@@ -49,15 +60,24 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             color: "primary",
             variant: "outlined",
             function: () => {
-                socket.emit("assignToMe", { sessionId: sessionID, user: agent.agentEmail });
+                socket.emit("assignToMe", {
+                    sessionId: sessionID,
+                    user: agent.agentDisplayName ? agent.agentDisplayName : agent.agentName,
+                    agentEmail: agent.agentEmail
+                });
+                dispatch(setAgentAvailability(1));
                 handleSendMessageEvent();
                 setShowDialog(false);
             },
         },
     ];
 
-
-    const updateAvailability = useCallback(
+    /**
+     * Update the availability status of the agent.
+     * 
+     * @param {boolean} status - The new availability status.
+     */
+    const updateResolvedStatus = useCallback(
         debounce(async (status) => {
             try {
                 await updateDoc("Session Details", sessionID, { "resolved": status });
@@ -66,8 +86,8 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                     sessionId: sessionID,
                     username: agent.agentDisplayName || agent.agentName,
                     room: sessionID,
+                    agentEmail: agent.agentEmail
                 });
-                console.log("API successfully updated with status:", status, "and session id is", sessionID);
             } catch (err) {
                 console.error("Error updating API with status:", err);
             }
@@ -75,18 +95,22 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
         [sessionID]
     );
 
-    const handleCheckboxChange = (event) => {
-        const status = event.target.checked; // Get the checkbox state (checked/unchecked)
-        setIsResolved(status);
-        updateAvailability(status); // Trigger debounced function
-    };
+    const handleAgentJoined = (data) => {
+        if (data.room === sessionID) {
+            setMessages((prevMessages) => [...prevMessages, {
+                user: data.username,
+                message: `${data.username} joined the chat`,
+                message_type: "Activity"
+            }]);
+        }
+    }
 
     // Auto-scroll to the latest message
     useEffect(() => {
         if (chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
-    }, [messages]);
+    }, [messages, isScrollToBottom]);
 
     useEffect(() => {
         mutate();
@@ -95,27 +119,30 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
     useEffect(() => {
         if (error) dispatch(setSessionID(""));
         if (data?.messages) {
+            data.messages.unshift({ message_type: "Message", message: "Greetings from Novel Office", time_stamp: data.messages[0].time_stamp });
             setMessages(data.messages);
-            let status = data.resolved ? true : false;
-            setIsResolved(status);
         }
     }, [data, error]);
 
     useEffect(() => {
-        if (socketData.sessionId === sessionID && socketData.status !== "resolved") {
+        if (socketData.sessionId === sessionID) {
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
                     user: socketData.username,
                     message: socketData.msg,
+                    time_stamp: socketData.timeStamp,
+                    message_type: socketData.messageType
                 },
             ]);
-            if (socketData.username === "Guest" && isResolved) {
-                updateAvailability(false);
-            }
         }
     }, [socketData]);
 
+    /**
+     * Handle assigned user details from the socket.
+     * 
+     * @param {Object} data - The data received from the socket.
+     */
     const handleAssignedUserDetails = (data) => {
         if (data.assignedUser === agent.agentEmail) {
             // Automatically send the message
@@ -124,16 +151,19 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             // Ask for permission to send the message
             setInputMessage(data.message);
             setDialogMessage(`This chat is being handled by ${data.assignedUser}. 
-                If you click "Yes" then it will be assigned to you`)
+                If you click "Yes" then it will be assigned to you`);
             setShowDialog(true);
         }
     };
 
     useEffect(() => {
         socket.on("assignedUserDetails", handleAssignedUserDetails);
+        socket.on("agentJoined", handleAgentJoined);
 
         return () => {
-            socket.off("assignedUserDetails", handleAssignedUserDetails); // Clean up the listener
+            socket.off("assignedUserDetails"); // Clean up the listener
+            socket.off("agentJoined");
+            setInputMessage("");
         };
     }, [agent.agentEmail, sessionID]);
 
@@ -144,11 +174,13 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
             if (!message) return; // Guard clause
         }
 
+        if (!agent.isAvailable) dispatch(setAgentAvailability(1));
         socket.emit("sendMessage", {
             sessionId: sessionID,
             username: agent.agentDisplayName || agent.agentName,
             msg: message,
             room: sessionID,
+            agentEmail: agent.agentEmail,
         });
 
         setTimeout(() => {
@@ -172,14 +204,20 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
 
         socket.emit("getAssignedUser", {
             sessionId: sessionID,
-            user: agent.agentEmail,
+            user: agent.agentDisplayName ? agent.agentDisplayName : agent.agentName,
             message: inputMessage.trim(),
+            agentEmail: agent.agentEmail,
         });
     };
 
     const handleInputChange = (e) => {
         let value = e.target.value;
         setInputMessage(value);
+
+        socket.emit("agentTyping", {
+            room: sessionID,
+            user: agent.agentName
+        })
 
         // Find matching canned messages
         let matches = agent.cannedMessages.filter(item =>
@@ -270,48 +308,9 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
 
     return (
         <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-            {/* Chat Header */}
-            <Box
-                sx={{
-                    padding: "0.3rem 2rem",
-                    borderBottom: '1px solid #ddd',
-                    position: 'sticky',
-                    top: 0,
-                    backgroundColor: 'white',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
-            >
-                <Stack flexDirection="row">
-                    <Typography variant="h6">{data && data.visitor_name ? data.visitor_name : sessionID}</Typography>
-                    {data && data.current_user &&
-                        <Tooltip 
-                            title="Assigned To" 
-                            placement="right" 
-                            arrow
-                            disableInteractive
-                        >
-                            <Badge
-                            sx={{ ml: 1, bgcolor: badgeBackground, color: "#fff", borderRadius: "8px", px: 1, fontSize: "0.75rem" }}
-                            >
-                            <span>{data.current_user}</span>
-                            </Badge>
-                        </Tooltip>
-                    }
-                </Stack>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            onChange={handleCheckboxChange}
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 20 } }}
-                            checked={isResolved}
-                        />
-                    }
-                    label="Resolved"
-                    sx={{ marginLeft: 0 }}
-                />
-            </Box>
+
+            {/*Chat Header */}
+            <ChatHeader data={data} setView={setView} updateResolvedStatus={updateResolvedStatus} />
 
             {/* Chat Messages */}
             <Box
@@ -330,70 +329,51 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                         No messages yet...
                     </Typography>
                 ) : (
-                    messages.map((message, index) => (
-                        <Box
-                            key={index}
-                            sx={{
-                                alignSelf:
-                                    message.user === "Guest"
-                                        ? "flex-start"
-                                        : "flex-end",
-                                backgroundColor:
-                                    message.user === "Guest"
-                                        ? "#f0f0f0"
-                                        : primaryColor,
-                                color:
-                                    message.user === "Guest" ? "#000" : "#fff",
-                                padding: 1,
-                                borderRadius: 1,
-                                maxWidth: "70%",
-                            }}
-                        >
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                {message.user !== "Guest" && (
-                                    <Typography variant="caption" sx={{ color: message.user === "Guest" ? '#666' : '#fff', opacity: 0.7, fontSize: '0.7rem' }}>
-                                        {message.user}
-                                    </Typography>
-                                )}
-                                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                                    {message.message}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    ))
+                    <Stack>
+                        <RenderMessages
+                            messages={messages}
+                        />
+                        {/* Guest Typing Indicator */}
+                        <AgentTyping socket={socket} sessionID={sessionID} setIsScrollToBottom={setIsScrollToBottom} />
+                    </Stack>
                 )}
                 {/* Scroll to bottom */}
                 <div ref={chatEndRef} />
             </Box>
 
+            {/* Guest Typing Indicator */}
+            <Typing socket={socket} sessionID={sessionID} />
+
             {/* Input Section */}
-            <Box
-                sx={{
-                    padding: 2,
-                    borderTop: "1px solid #ddd",
-                    display: "flex",
-                    bottom: "0px",
-                    gap: 2,
-                }}
-            >
-                <Box sx={{ position: "relative", width: "100%" }}>
-                    {inputMessage.length >= 3 && suggestedMessages.length > 0 && renderMessageSuggestions()}
-                    <TextField
-                        fullWidth
-                        placeholder="Reply to live chat"
-                        value={inputMessage}
-                        onChange={handleInputChange}
-                        onKeyDown={handleKeyDown}
-                        multiline
-                        minRows={1}
-                        maxRows={4}
-                        sx={{ resize: 'vertical' }}
-                    />
+            {
+                true &&
+                <Box
+                    sx={{
+                        padding: 1,
+                        display: "flex",
+                        bottom: "0px",
+                        gap: 2,
+                    }}
+                >
+                    <Box sx={{ position: "relative", width: "100%" }}>
+                        {inputMessage.length >= 3 && suggestedMessages.length > 0 && renderMessageSuggestions()}
+                        <TextField
+                            fullWidth
+                            placeholder="Reply to live chat"
+                            value={inputMessage}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            multiline
+                            minRows={1}
+                            maxRows={4}
+                            sx={{ resize: 'vertical' }}
+                        />
+                    </Box>
+                    <Button variant="contained" onClick={handleSendMessage}>
+                        Send
+                    </Button>
                 </Box>
-                <Button variant="contained" onClick={handleSendMessage}>
-                    Send
-                </Button>
-            </Box>
+            }
 
             {/* Dialog Box */}
             <AlertDialog
@@ -403,7 +383,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList })
                 message={dialogMessage}
                 buttonNameAndFunctions={buttonNameAndFunctions}
             />
-        </Box>
+        </Box >
     );
 };
 

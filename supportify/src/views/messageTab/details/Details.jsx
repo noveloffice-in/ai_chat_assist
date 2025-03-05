@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, IconButton } from '@mui/material';
+import { Box, Typography, TextField, IconButton, Button } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useFrappeGetCall, useFrappeGetDoc, useFrappeUpdateDoc } from 'frappe-react-sdk';
 import { useSelector } from 'react-redux';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const Details = ({ setRefreshSessionList }) => {
+/**
+ * Client Details component for displaying and editing client information.
+ * 
+ * @param {Object} props - Component props.
+ * @param {Function} props.setRefreshSessionList - Function to refresh the session list.
+ * @param {Function} props.setView - Function to set the current view.
+ * @param {boolean} props.isDesktop - Flag indicating if the view is desktop.
+ */
+const Details = ({ setRefreshSessionList, setView, isDesktop }) => {
   // Initial values
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,12 +27,11 @@ const Details = ({ setRefreshSessionList }) => {
     (state) => state.currentSessionReducer.sessionID
   );
 
-  const { data, error } = useFrappeGetDoc("Client Details", sessionID);
+  const { data } = useFrappeGetDoc("Client Details", sessionID);
   const { updateDoc } = useFrappeUpdateDoc();
 
   // Fetch data from the API
   useEffect(() => {
-    console.log("data details", data);
     if (data) {
       setName(data.name1 || '');
       setEmail(data.email_address || '');
@@ -31,58 +39,67 @@ const Details = ({ setRefreshSessionList }) => {
     }
   }, [data]);
 
-  // Handle changes in the input fields
+  /**
+   * Handle changes in the input fields.
+   * 
+   * @param {string} field - The field being updated ('name', 'email', or 'contact').
+   * @param {string} value - The new value for the field.
+   */
   const handleInputChange = (field, value) => {
-    if (field === 'name') {
-      setName(value);
-      setIsNameValid(value.trim().length > 0);
-    }
-    if (field === 'email') {
-      setEmail(value);
-      setIsEmailValid(value.trim().length > 0 && /\S+@\S+\.\S+/.test(value));
-    }
-    if (field === 'contact') {
-      setContact(value);
-      setIsContactValid(value.trim().length > 0 && /^\d{10}$/.test(value));
+    switch (field) {
+      case 'name':
+        setName(value);
+        setIsNameValid(value.trim().length > 0);
+        break;
+      case 'email':
+        setEmail(value);
+        setIsEmailValid(value.trim().length > 0 && /\S+@\S+\.\S+/.test(value));
+        break;
+      case 'contact':
+        setContact(value);
+        setIsContactValid(value.trim().length > 0 && /^\d{10}$/.test(value));
+        break;
+      default:
+        break;
     }
   };
 
-  // Handle saving the fields
+  /**
+   * Handle saving the fields.
+   * 
+   * @param {string} field - The field being saved ('name', 'email', or 'contact').
+   */
   const handleSave = (field) => {
-    updateDoc(
-      "Client Details",
-      sessionID,
-      {
-        "name1": name,
-        "contact_number": contact,
-        "email_address": email
-      }
-    ).then(res => {
-      switch (field) {
-        case "name":
+    const clientDetails = {
+      "name1": name,
+      "contact_number": contact,
+      "email_address": email
+    };
+
+    updateDoc("Client Details", sessionID, clientDetails)
+      .then(() => {
+        if (field === "name") {
           setTimeout(() => {
             setRefreshSessionList(prev => !prev);
           }, 2000);
           setIsNameValid(false);
-          break;
-        case "email":
+        } else if (field === "email") {
           setIsEmailValid(false);
-          break;
-        case "contact":
+        } else if (field === "contact") {
           setIsContactValid(false);
-          break;
-        default:
-          break;
-      }
-    }).catch(err => {
-      console.log("Error while updating the Client Details", err);
-    });
+        }
+      })
+      .catch(err => {
+        console.log("Error while updating the Client Details", err);
+      });
+
     updateDoc("Session Details", sessionID, { "visitor_name": name });
   };
 
   return (
     <Box>
-      <Box sx={{ padding: '0.9rem 1rem', borderBottom: '1px solid #ddd', marginBottom: '1rem' }}>
+      <Box sx={{ padding: '0.9rem 1rem', borderBottom: '1px solid #ddd', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+        {!isDesktop && <ArrowBackIcon onClick={() => setView("chat")} />}
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Client Details</Typography>
       </Box>
 

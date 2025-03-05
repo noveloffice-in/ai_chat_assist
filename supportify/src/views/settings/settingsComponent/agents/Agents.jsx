@@ -19,12 +19,13 @@ import {
   Box,
   Stack,
   Typography,
+  Switch
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { debounce } from "lodash";
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import PersonIcon from '@mui/icons-material/Person';
-import AlertDialog from "../../../layouts/full/shared/dialog/AlertDialog";
+import AlertDialog from "../../../../layouts/full/shared/dialog/AlertDialog";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
@@ -47,7 +48,7 @@ const tableHeads = [
   "Action"
 ];
 
-export default function Agents() {
+export default function Agents({isDesktop}) {
   const { data: agents, mutate } = useFrappeGetDocList("Agent Profile", {
     fields: ["name", "agent_name", "agent_display_name", "is_available", "is_admin", "enabled"],
   });
@@ -174,9 +175,9 @@ export default function Agents() {
   };
 
   return (
-    <>
+    <Box sx={{ width:{xs:'100%', overflowX:'hidden' }}}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Stack sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Stack sx={{ display: "flex", alignItems: "center", gap: 1, flexDirection:!isDesktop ? "row" : "column" }}>
           {agentStatus.map((status, index) => (
             <Stack key={index} direction="row" alignItems="center" gap={1}>
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", p: 0.8, backgroundColor: status.color }} />
@@ -189,7 +190,7 @@ export default function Agents() {
           Add Agent
         </Button>
       </Box>
-      <Paper elevation={10} sx={{ p: 2, borderRadius: "16px", mt: 2 }}>
+      <Paper elevation={10} sx={{ p: 2, borderRadius: "16px", mt: 2 , overflowX:"auto"}}>
         <TableContainer sx={{ borderRadius: "16px" }}>
           <Table>
             <TableHead>
@@ -210,9 +211,9 @@ export default function Agents() {
                       {agent.agent_name}
                     </Stack>
                   </TableCell>
-                  <TableCell>{agent.agent_display_name || "N/A"}</TableCell>
+                  <TableCell>{agent.agent_display_name || "-"}</TableCell>
                   <TableCell>
-                    <Checkbox
+                    <Switch
                       checked={!!agent.is_available}
                       onChange={handleCheckboxChange(agent.name, "is_available")}
                       disabled={agent.name === "Administrator" || !agent.enabled}
@@ -302,6 +303,6 @@ export default function Agents() {
         draggable
         pauseOnHover
       />
-    </>
+    </Box>
   );
 }

@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "user",
+  "agent_email",
   "message_type",
   "column_break_akgr",
   "time_stamp",
@@ -24,7 +25,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Message Type",
-   "options": "Message\nAttachment"
+   "options": "Message\nActivity\nAttachment"
   },
   {
    "fieldname": "column_break_akgr",
@@ -40,12 +41,17 @@
    "fieldtype": "Long Text",
    "in_list_view": 1,
    "label": "Message"
+  },
+  {
+   "fieldname": "agent_email",
+   "fieldtype": "Data",
+   "label": "Agent Email"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-02-15 10:40:01.598841",
+ "modified": "2025-02-21 09:36:28.621025",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Messages",

@@ -1,27 +1,37 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Box, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Import your components
-import Profile from './settingsComponent/Profile';
-import Account from './settingsComponent/Account';
-import General from './settingsComponent/General';
-import Agents from './settingsComponent/Agents';
+import Profile from './settingsComponent/profile/Profile';
+import Shortcuts from './settingsComponent/shortcuts/Shortcuts';
+import General from './settingsComponent/general/General';
+import Agents from './settingsComponent/agents/Agents';
+import Tags from './settingsComponent/tags/Tags';
 
-const SettingsMain = () => {
+const SettingsMain = ({ setViewSetting, isDesktop }) => {
   const selectedOption = useSelector((state) => state.settingsReducer.currentSettingChoice);
 
   // Map options to components
   const componentMap = {
-    Profile: <Profile />,
-    Account: <Account />,
-    General: <General />,
-    Agents: <Agents />,
+    Profile: <Profile isDesktop={isDesktop} setViewSetting={setViewSetting} />,
+    Shortcuts: <Shortcuts isDesktop={isDesktop} setViewSetting={setViewSetting} />,
+    General: <General isDesktop={isDesktop} setViewSetting={setViewSetting} />,
+    Agents: <Agents isDesktop={isDesktop} />,
+    Tags: <Tags isDesktop={isDesktop} />,
   };
 
   return (
-    <Box>
-      <Typography variant="h4">{selectedOption} Settings</Typography>
+    <Box sx={{ width: !isDesktop ? 'calc(100vw - 42px)' : 'auto' }}>
+      <Stack direction={'row'}>
+        {!isDesktop &&
+          <ArrowBackIcon
+            onClick={() => setViewSetting("main")}
+            sx={{ mr: 2 }}
+          />}
+        <Typography variant="h4">{selectedOption} Settings</Typography>
+      </Stack>
       <Box sx={{ marginTop: '1rem' }}>
         {/* Render the appropriate component based on the selectedOption */}
         {componentMap[selectedOption] || (

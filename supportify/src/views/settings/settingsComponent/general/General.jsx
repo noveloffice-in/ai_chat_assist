@@ -1,7 +1,7 @@
 import { Box, Button } from '@mui/material';
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setTheme } from '../../../store/slices/SettingSlice';
+import { setTheme } from '../../../../store/slices/SettingSlice';
 import { useFrappeUpdateDoc } from 'frappe-react-sdk';
 import { debounce } from 'lodash';
 
@@ -70,7 +70,11 @@ export default function General() {
         {
           themeButtons.map((theme) => {
             return (
-              <Button variant="contained" onClick={() => handleThemeChange(theme.name.toLocaleLowerCase())} style={{ backgroundColor: `${theme.color}` }}>
+              <Button variant="contained"
+                key={theme.name}
+                onClick={() => handleThemeChange(theme.name.toLocaleLowerCase())}
+                style={{ backgroundColor: `${theme.color}` }}
+              >
                 {theme.name}
               </Button>
             )

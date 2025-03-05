@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { useRoutes } from "react-router-dom";
 import Router from "../src/routes/Router";
+// import './index.css'
 
 import {
     baselightTheme,

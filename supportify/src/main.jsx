@@ -7,6 +7,7 @@ import { FrappeProvider } from 'frappe-react-sdk';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import './index.css'
 
 const frappeURL = import.meta.env.VITE_FRAPPE_URL;
 const frappeSocket = import.meta.env.VITE_FRAPPE_SOCKET;
