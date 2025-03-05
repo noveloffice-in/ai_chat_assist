@@ -35,7 +35,7 @@ export default function Tags() {
       return;
     }
 
-    createDoc("Tags", { "tag": newTag.name, "description": newTag.description  })
+    createDoc("Tags", { "tag": newTag.name, "description": newTag.description })
       .then((res) => {
         if (res && res.name) {
           toast.success('Tag added successfully!');
@@ -67,7 +67,7 @@ export default function Tags() {
   };
 
   return (
-    <Paper elevation={5} sx={{ padding: 3, borderRadius: 2 }}>
+    <Paper elevation={5} sx={{ padding: 1, borderRadius: 2 }}>
       {/* Add Tag Button - Moved to the right */}
       <Button 
         variant="contained" 
