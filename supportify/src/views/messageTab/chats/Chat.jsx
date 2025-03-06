@@ -329,7 +329,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, s
                         No messages yet...
                     </Typography>
                 ) : (
-                    <Stack>
+                    <Stack gap={0.5}>
                         <RenderMessages
                             messages={messages}
                         />

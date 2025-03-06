@@ -146,7 +146,7 @@ const SessionList = ({ socketData, refreshSessionList, setView }) => {
             </Tabs>
 
             {/* Scrollable Session List */}
-            <Scrollbar sx={{ maxHeight: "500px" }}>
+            <Scrollbar sx={{ maxHeight: "80dvh" }}>
                 <List>
                     {sessions.length ?
                         <RenderSessionList
