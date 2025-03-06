@@ -14,7 +14,6 @@ export default function HeaderTags({ data }) {
     const { updateDoc } = useFrappeUpdateDoc();
 
     const [tags, setTags] = useState([]);
-    console.log("Tags", tags);
     const [showHiddenTags, setShowHiddenTags] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [tooltipTag, setTooltipTag] = useState(null);

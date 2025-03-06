@@ -4,22 +4,23 @@ import { green, red } from '@mui/material/colors';
 import Switch from '@mui/material/Switch';
 import { useDispatch, useSelector } from 'react-redux';
 import { debounce } from 'lodash';
-import { useFrappeGetDocList, useFrappeUpdateDoc } from 'frappe-react-sdk';
+import { useFrappeGetDoc, useFrappeGetDocList, useFrappeUpdateDoc } from 'frappe-react-sdk';
 import { setAgentAvailability } from '../../../store/slices/AgentSlice';
 
 export default function Available() {
 
     const agentDetails = useSelector((state) => state.agentReducer);
-    const [available, setAvailable] = useState(agentDetails.isAvailable ? agentDetails.isAvailable : false);
+    const [available, setAvailable] = useState(false);
     const dispatch = useDispatch();
 
+    const { data, mutate } = useFrappeGetDoc('Agent Profile', agentDetails.agentEmail);
     const { updateDoc } = useFrappeUpdateDoc();
 
     const updateAvailability = useCallback(
         debounce(async (status) => {
             updateDoc("Agent Profile", agentDetails.agentEmail, { is_available: status })
                 .then((res) => {
-                    dispatch(setAgentAvailability(status));
+                    mutate();
                 })
                 .catch((err) => {
                     console.log("Error = ", err);
@@ -29,9 +30,18 @@ export default function Available() {
     );
 
     useEffect(() => {
-        setAvailable(agentDetails.isAvailable);
+        console.log("In the store", agentDetails.isAvailable);
         updateAvailability(agentDetails.isAvailable);
     }, [agentDetails.isAvailable]);
+
+    useEffect(() => {
+        if (data && data.is_available !== agentDetails.isAvailable) {
+            console.log("data.is_available", data.is_available);
+            console.log("In the store data effect", agentDetails.isAvailable);
+            dispatch(setAgentAvailability(data.is_available));
+        }
+        setAvailable(agentDetails.isAvailable);
+    }, [data]);
 
     const GreenSwitch = styled(Switch)(({ theme }) => ({
         // Styles when checked (Green)
