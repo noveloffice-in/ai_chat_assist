@@ -30,14 +30,11 @@ export default function Available() {
     );
 
     useEffect(() => {
-        console.log("In the store", agentDetails.isAvailable);
         updateAvailability(agentDetails.isAvailable);
     }, [agentDetails.isAvailable]);
 
     useEffect(() => {
         if (data && data.is_available !== agentDetails.isAvailable) {
-            console.log("data.is_available", data.is_available);
-            console.log("In the store data effect", agentDetails.isAvailable);
             dispatch(setAgentAvailability(data.is_available));
         }
         setAvailable(agentDetails.isAvailable);
