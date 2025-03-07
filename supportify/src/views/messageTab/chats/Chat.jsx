@@ -119,7 +119,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, s
     useEffect(() => {
         if (error) dispatch(setSessionID(""));
         if (data?.messages) {
-            data.messages.unshift({ message_type: "Message", message: "Greetings from Novel Office", time_stamp: data.messages[0].time_stamp });
+            // data.messages.unshift({ message_type: "Message", message: "Greetings from Novel Office", time_stamp: data.messages[0].time_stamp });
             setMessages(data.messages);
         }
     }, [data, error]);
