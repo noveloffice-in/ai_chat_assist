@@ -1,12 +1,17 @@
 // src/components/Login.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Paper, Typography, Box, Alert } from '@mui/material';
+import { TextField, Button, Paper, Typography, Box, Alert, InputAdornment, IconButton, FormControl, InputLabel, OutlinedInput } from '@mui/material';
 import { useFrappeAuth } from 'frappe-react-sdk';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from "react-toastify";
+//For password
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const Login = () => {
+
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
 
@@ -75,14 +80,51 @@ const Login = () => {
                             value={credentials.email}
                             onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                         />
-                        <TextField
+
+                        {/* <TextField
                             fullWidth
                             label="Password"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             margin="normal"
                             value={credentials.password}
                             onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                        />
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => { setShowPassword(!showPassword) }}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOffIcon size="20" /> : <VisibilityIcon size="20" />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        /> */}
+
+                        <FormControl variant="outlined" fullWidth>
+                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={credentials.password}
+                                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label={
+                                                showPassword ? 'hide the password' : 'display the password'
+                                            }
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOffIcon size="20" /> : <VisibilityIcon size="20" />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                label="Password"
+                            />
+                        </FormControl>
+
                         <Button
                             fullWidth
                             variant="contained"
