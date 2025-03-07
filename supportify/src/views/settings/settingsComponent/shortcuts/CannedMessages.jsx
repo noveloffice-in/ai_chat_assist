@@ -17,7 +17,7 @@ export default function CannedMessages({ doctype }) {
   const { call: getCannedMessages } = useFrappePostCall("ai_chat_assist.api.supportify.agent.get_canned_messages");
 
   const agent = useSelector((state) => state.agentReducer);
-  let isAllowedToEdit = agent.isAdmin;
+  let isAllowedToEdit = Boolean(agent.isAdmin);
   
   if(doctype === 'personal') isAllowedToEdit = true;
 
