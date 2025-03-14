@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { debounce } from 'lodash';
 import { useFrappeGetDoc, useFrappeGetDocList, useFrappeUpdateDoc } from 'frappe-react-sdk';
 import { setAgentAvailability } from '../../../store/slices/AgentSlice';
+import getSocketObj from '../../../utilities/getSocket';
 
 export default function Available() {
 
@@ -15,6 +16,8 @@ export default function Available() {
 
     const { data, mutate } = useFrappeGetDoc('Agent Profile', agentDetails.agentEmail);
     const { updateDoc } = useFrappeUpdateDoc();
+
+    const socket = getSocketObj();
 
     const updateAvailability = useCallback(
         debounce(async (status) => {
@@ -31,6 +34,11 @@ export default function Available() {
 
     useEffect(() => {
         updateAvailability(agentDetails.isAvailable);
+        socket.emit("agentAvailability",
+            {
+                "agentEmail": agentDetails.agentEmail,
+                "isOnline": agentDetails.isAvailable
+            });
     }, [agentDetails.isAvailable]);
 
     useEffect(() => {
