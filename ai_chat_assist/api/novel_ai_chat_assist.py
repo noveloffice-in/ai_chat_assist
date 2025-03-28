@@ -89,6 +89,7 @@ def update_feedback(session_id, ratings, feedback):
         return "error"
 
 # Request handler
+@frappe.whitelist()
 def request_handler():
     data = frappe.request.json
 
