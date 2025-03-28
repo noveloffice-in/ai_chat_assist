@@ -46,3 +46,8 @@ class SessionDetails(Document):
 						row = self.append("multi_assign_agent_details", {})
 						row.user = session_user
 						row.took_control_on_at = formatted_datetime
+		
+		if frappe.db.exists(self.doctype, self.name):
+			previous_doc = frappe.get_doc(self.doctype, self.name)
+			if previous_doc.ratings != self.ratings or previous_doc.feedback != self.feedback:
+				self.ratings_given_to = self.current_user

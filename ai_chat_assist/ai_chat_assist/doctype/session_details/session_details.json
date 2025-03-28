@@ -26,7 +26,12 @@
   "column_break_ixve",
   "time_taken_for_first_response",
   "section_break_qhjm",
-  "multi_assign_agent_details"
+  "multi_assign_agent_details",
+  "feedback_tab",
+  "ratings",
+  "feedback",
+  "column_break_ckbn",
+  "ratings_given_to"
  ],
  "fields": [
   {
@@ -136,11 +141,35 @@
    "fieldtype": "Small Text",
    "label": "Tags",
    "max_height": "4rem"
+  },
+  {
+   "fieldname": "feedback_tab",
+   "fieldtype": "Tab Break",
+   "label": "Feedback"
+  },
+  {
+   "fieldname": "ratings",
+   "fieldtype": "Data",
+   "label": "Ratings"
+  },
+  {
+   "fieldname": "feedback",
+   "fieldtype": "Text",
+   "label": "Feedback"
+  },
+  {
+   "fieldname": "column_break_ckbn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ratings_given_to",
+   "fieldtype": "Data",
+   "label": "Ratings Given To"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-05 15:12:45.425265",
+ "modified": "2025-03-26 10:31:37.290083",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Session Details",

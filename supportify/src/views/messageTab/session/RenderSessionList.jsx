@@ -1,9 +1,15 @@
 import { Badge, Box, Chip, ListItem, Stack, Typography } from '@mui/material'
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
+import { useSelector } from 'react-redux';
 dayjs.extend(isToday);
 
-export default function RenderSessionList({sessions, handleSessionClick}) {
+export default function RenderSessionList({ sessions, handleSessionClick }) {
+
+    const sessionID = useSelector(
+        (state) => state.currentSessionReducer.sessionID
+    );
+
     return (
         <>
             {sessions.map((session, index) => (
@@ -11,7 +17,15 @@ export default function RenderSessionList({sessions, handleSessionClick}) {
                     button
                     key={index}
                     onClick={() => handleSessionClick(session.name)}
-                    sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        backgroundColor: session.name === sessionID ? "#e4e4e4" : "transparent",
+                        "&:hover": {
+                            backgroundColor: "#d0cfcf",
+                        }
+                    }}
                 >
                     {/* Left Section: Visitor Name */}
                     <Stack gap={0.5} justifyContent="center">

@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-25 14:27:18.786641",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "messages_section",
+  "welcome_message",
+  "column_break_btrj",
+  "returning_message",
+  "website_paths_section",
+  "allowed_origins",
+  "column_break_yuom",
+  "restricted_paths"
+ ],
+ "fields": [
+  {
+   "fieldname": "messages_section",
+   "fieldtype": "Section Break",
+   "label": "Messages"
+  },
+  {
+   "fieldname": "welcome_message",
+   "fieldtype": "Small Text",
+   "label": "Welcome Message"
+  },
+  {
+   "fieldname": "column_break_btrj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "returning_message",
+   "fieldtype": "Small Text",
+   "label": "Returning Message"
+  },
+  {
+   "fieldname": "website_paths_section",
+   "fieldtype": "Section Break",
+   "label": "Website Paths"
+  },
+  {
+   "fieldname": "allowed_origins",
+   "fieldtype": "Table",
+   "label": "Allowed Origins",
+   "options": "Website Paths"
+  },
+  {
+   "fieldname": "column_break_yuom",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "restricted_paths",
+   "fieldtype": "Table",
+   "label": "Restricted Paths",
+   "options": "Website Paths"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-03-25 14:54:27.324458",
+ "modified_by": "Administrator",
+ "module": "AI Chat Assist",
+ "name": "Widget Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
