@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentSettingChoice } from '../../store/slices/SettingSlice';
 import { Box, List, ListItem, ListItemIcon, ListItemText, useTheme } from '@mui/material';
-import { IconSettingsCog, IconUserEdit, IconBrandBluesky, IconUsersGroup, IconTags } from '@tabler/icons-react'
+import { IconSettingsCog, IconUserEdit, IconBrandBluesky, IconUsersGroup, IconTags, IconMessageCircle } from '@tabler/icons-react'
 import { useFrappeGetDoc } from 'frappe-react-sdk';
 import { setAgentAdminStatus } from '../../store/slices/AgentSlice';
 
@@ -33,6 +33,7 @@ const SettingsSidebar = ({ setViewSetting, isDesktop }) => {
     if (agentData && agentData.is_admin) {
         options.push({ name: "Agents", icon: <IconUsersGroup /> });
         options.push({ name: "Tags", icon: <IconTags /> });
+        options.push({ name: "Widget", icon: <IconMessageCircle /> });
     }
 
     return (

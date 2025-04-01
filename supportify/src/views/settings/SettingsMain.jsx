@@ -9,6 +9,7 @@ import Shortcuts from './settingsComponent/shortcuts/Shortcuts';
 import General from './settingsComponent/general/General';
 import Agents from './settingsComponent/agents/Agents';
 import Tags from './settingsComponent/tags/Tags';
+import WidgetSettings from './settingsComponent/widgetSettings/WidgetSettings';
 
 const SettingsMain = ({ setViewSetting, isDesktop }) => {
   const selectedOption = useSelector((state) => state.settingsReducer.currentSettingChoice);
@@ -20,6 +21,7 @@ const SettingsMain = ({ setViewSetting, isDesktop }) => {
     General: <General isDesktop={isDesktop} setViewSetting={setViewSetting} />,
     Agents: <Agents isDesktop={isDesktop} />,
     Tags: <Tags isDesktop={isDesktop} />,
+    Widget: <WidgetSettings isDesktop={isDesktop} />,
   };
 
   return (
