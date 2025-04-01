@@ -86,15 +86,15 @@ export default function ChatHeader({ data, setView, updateResolvedStatus }) {
                     }
 
                     {
-                        isClaimed ?
-                            !isClamiedBySameAgent &&
-                            <Button variant="outlined" size="small">
-                                Re-claim
-                            </Button>
-                            :
-                            <Button variant="outlined" size="small">
-                                Claim
-                            </Button>
+                        // isClaimed ?
+                        //     !isClamiedBySameAgent &&
+                        //     <Button variant="outlined" size="small">
+                        //         Re-claim
+                        //     </Button>
+                        //     :
+                        //     <Button variant="outlined" size="small">
+                        //         Claim
+                        //     </Button>
                     }
 
                 </Stack>

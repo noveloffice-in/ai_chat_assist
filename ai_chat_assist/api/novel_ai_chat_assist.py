@@ -30,12 +30,13 @@ def add_location_details(session_id, accuracy, longitude, latitude):
 def save_message(msg, session_id, user, message_type, agent_email, time_stamp):
     doc = frappe.get_doc(SESSION_DETAILS, session_id)
     child_record = doc.append("messages", {})
-    child_record.user = frappe.session.user
     child_record.message = msg
     child_record.user = user
     child_record.message_type = message_type if message_type else "Message"
     child_record.agent_email = agent_email
     child_record.time_stamp = time_stamp
+    if user == "Guest" and doc.resolved:
+        doc.resolved = 0
     doc.save()
     return 'success'
 
@@ -84,6 +85,7 @@ def update_feedback(session_id, ratings, feedback):
         session_detail = frappe.get_doc(SESSION_DETAILS, session_id)
         session_detail.ratings = ratings
         session_detail.feedback = feedback
+        session_detail.resolved = 1
         session_detail.save()
     else:
         return "error"

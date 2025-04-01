@@ -37,12 +37,12 @@
   {
    "fieldname": "general_details_tab",
    "fieldtype": "Tab Break",
-   "label": "General Details"
+   "label": "General"
   },
   {
    "fieldname": "agent_details_tab",
    "fieldtype": "Tab Break",
-   "label": "Agent Details"
+   "label": "Agent"
   },
   {
    "fieldname": "current_user",
@@ -169,7 +169,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-26 10:31:37.290083",
+ "modified": "2025-04-01 11:53:04.589105",
  "modified_by": "Administrator",
  "module": "AI Chat Assist",
  "name": "Session Details",
