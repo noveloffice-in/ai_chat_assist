@@ -28,6 +28,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AlertDialog from "../../../../layouts/full/shared/dialog/AlertDialog";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import getSocketObj from "../../../../utilities/getSocket";
 
 const agentStatus = [
   {
@@ -48,7 +49,7 @@ const tableHeads = [
   "Action"
 ];
 
-export default function Agents({isDesktop}) {
+export default function Agents({ isDesktop }) {
   const { data: agents, mutate } = useFrappeGetDocList("Agent Profile", {
     fields: ["name", "agent_name", "agent_display_name", "is_available", "is_admin", "enabled"],
   });
@@ -66,6 +67,8 @@ export default function Agents({isDesktop}) {
     buttonNameAndFunctions: []
   });
 
+  const socket = getSocketObj();
+
   const [openAddAgentDialog, setOpenAddAgentDialog] = useState(false);
   const [newAgent, setNewAgent] = useState({ user: "", agent_name: "", agent_display_name: "" });
   const [users, setUsers] = useState([]);
@@ -75,7 +78,7 @@ export default function Agents({isDesktop}) {
       setEditableAgents(agents);
     }
   }, [agents]);
-    
+
   const notifySuccess = (message) => toast.success(message, { toastId: "success" });
   const notifyError = (message) => toast.error(message, { toastId: "error" });
 
@@ -83,6 +86,7 @@ export default function Agents({isDesktop}) {
     debounce(async (name, field, value) => {
       try {
         await updateDoc("Agent Profile", name, { [field]: value });
+        socket.emit("agentAvailability", { isOnline: value, agentEmail: name });
         mutate();
       } catch (error) {
         console.error("Update failed:", error);
@@ -128,7 +132,7 @@ export default function Agents({isDesktop}) {
   const handleCloseAddAgentDialog = () => {
     setOpenAddAgentDialog(false);
   };
-  
+
   const handleSave = async () => {
     if (!newAgent.agent_name || !newAgent.user) {
       notifyError(newAgent.agent_name ? "User is required!" : "Agent Name is required!");
@@ -175,9 +179,9 @@ export default function Agents({isDesktop}) {
   };
 
   return (
-    <Box sx={{ width:{xs:'100%', overflowX:'hidden' }}}>
+    <Box sx={{ width: { xs: '100%', overflowX: 'hidden' } }}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Stack sx={{ display: "flex", alignItems: "center", gap: 1, flexDirection:!isDesktop ? "row" : "column" }}>
+        <Stack sx={{ display: "flex", alignItems: "center", gap: 1, flexDirection: !isDesktop ? "row" : "column" }}>
           {agentStatus.map((status, index) => (
             <Stack key={index} direction="row" alignItems="center" gap={1}>
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", p: 0.8, backgroundColor: status.color }} />
@@ -190,7 +194,7 @@ export default function Agents({isDesktop}) {
           Add Agent
         </Button>
       </Box>
-      <Paper elevation={10} sx={{ p: 2, borderRadius: "16px", mt: 2 , overflowX:"auto"}}>
+      <Paper elevation={10} sx={{ p: 2, borderRadius: "16px", mt: 2, overflowX: "auto" }}>
         <TableContainer sx={{ borderRadius: "16px" }}>
           <Table>
             <TableHead>

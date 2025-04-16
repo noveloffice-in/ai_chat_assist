@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, useTheme, Checkbox, FormControlLabel, Stack, Badge, Tooltip, useMediaQuery } from "@mui/material";
+import { Button, useTheme, Checkbox, FormControlLabel, Stack, Badge, Tooltip, useMediaQuery, ClickAwayListener } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSelector } from "react-redux";
 import HeaderTags from "./HeaderTags";
+import Rating from '@mui/material/Rating';
 
-export default function ChatHeader({ data, setView, updateResolvedStatus }) {
+export default function ChatHeader({ data, setView, updateResolvedStatus, guestAvailability }) {
     const isDesktop = useMediaQuery("(min-width:900px)");
 
     const agent = useSelector((state) => state.agentReducer);
@@ -17,6 +18,12 @@ export default function ChatHeader({ data, setView, updateResolvedStatus }) {
     }
 
     const [isResolved, setIsResolved] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [ratingInfo, setRatingInfo] = useState({
+        ratings: 0,
+        feedback: "",
+        ratingsGivenTo: ""
+    });
 
     const isClaimed = data && data.current_user;
     const isClamiedBySameAgent = data && data.current_user === agent.agentEmail;
@@ -28,7 +35,13 @@ export default function ChatHeader({ data, setView, updateResolvedStatus }) {
     };
 
     useEffect(() => {
+        if (!data) return;
         let status = data && data.resolved;
+        setRatingInfo({
+            ratings: data.ratings ?? 0,
+            feedback: data.feedback ?? "",
+            ratingsGivenTo: data.ratings_given_to ?? ""
+        });
         setIsResolved(Boolean(status));
     }, [data]);
 
@@ -57,6 +70,8 @@ export default function ChatHeader({ data, setView, updateResolvedStatus }) {
                             sx={{ mr: 2 }}
                         />}
                     <Badge
+                        color = {guestAvailability ? "success" : "error"}
+                        variant = "dot"
                         sx={{
                             borderRadius: "8px",
                             px: 1,
@@ -98,19 +113,50 @@ export default function ChatHeader({ data, setView, updateResolvedStatus }) {
                     }
 
                 </Stack>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            onChange={handleCheckboxChange}
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 20 } }}
-                            checked={isResolved}
-                        />
-                    }
-                    label="Resolved"
-                    sx={{ marginLeft: 0 }}
-                />
+                <Stack flexDirection='row' justifyContent='space-between' alignItems='center' gap={10} flexWrap="wrap">
+                    <ClickAwayListener onClickAway={() => { setShowTooltip(false); }}>
+                        <Tooltip
+                            title={
+                                ratingInfo?.ratingsGivenTo || ratingInfo?.feedback
+                                    ? (
+                                        <>
+                                            <div><strong>Ratings given to:</strong> {ratingInfo.ratingsGivenTo || "N/A"}</div>
+                                            <div><strong>Feedback:</strong> {ratingInfo.feedback || "No feedback"}</div>
+                                        </>
+                                    )
+                                    : "No feedback"
+                            }
+                            placement="bottom"
+                            arrow
+                            open={showTooltip}
+                            onClick={() => { setShowTooltip(!showTooltip); }}
+                        >
+                            <span>
+                                <Rating
+                                    name="size-small"
+                                    value={ratingInfo.ratings}
+                                    size="small"
+                                    precision={0.5}
+                                    readOnly
+                                />
+                            </span>
+                        </Tooltip>
+                    </ClickAwayListener>
+
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                onChange={handleCheckboxChange}
+                                sx={{ '& .MuiSvgIcon-root': { fontSize: 20 } }}
+                                checked={isResolved}
+                            />
+                        }
+                        label="Resolved"
+                        sx={{ marginLeft: 0 }}
+                    />
+                </Stack>
             </Stack >
-            <HeaderTags data={data}/>
+            <HeaderTags data={data} />
         </>
     )
 }
