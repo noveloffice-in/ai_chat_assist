@@ -35,6 +35,7 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, s
     const [suggestedMessages, setSuggestedMessages] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [isScrollToBottom, setIsScrollToBottom] = useState(false);
+    const [guestAvailability, setGuestAvailability] = useState(false);
 
     const { data, error, mutate } = useFrappeGetDoc("Session Details", sessionID);
     const { updateDoc } = useFrappeUpdateDoc();
@@ -159,10 +160,14 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, s
     useEffect(() => {
         socket.on("assignedUserDetails", handleAssignedUserDetails);
         socket.on("agentJoined", handleAgentJoined);
+        socket.on("userAvailability", (data) => {
+            if (data.room === sessionID) setGuestAvailability(data.isOnline);
+        });
 
         return () => {
             socket.off("assignedUserDetails"); // Clean up the listener
             socket.off("agentJoined");
+            socket.off("userAvailability");
             setInputMessage("");
         };
     }, [agent.agentEmail, sessionID]);
@@ -310,7 +315,12 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, s
         <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
 
             {/*Chat Header */}
-            <ChatHeader data={data} setView={setView} updateResolvedStatus={updateResolvedStatus} />
+            <ChatHeader
+                data={data}
+                setView={setView}
+                updateResolvedStatus={updateResolvedStatus}
+                guestAvailability={guestAvailability}
+            />
 
             {/* Chat Messages */}
             <Box
