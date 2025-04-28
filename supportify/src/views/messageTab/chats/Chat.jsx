@@ -87,7 +87,8 @@ const Chat = ({ socketData, socket, setRefreshSessionList, refreshSessionList, s
                     sessionId: sessionID,
                     username: agent.agentDisplayName || agent.agentName,
                     room: sessionID,
-                    agentEmail: agent.agentEmail
+                    agentEmail: agent.agentEmail,
+                    resolved: status
                 });
             } catch (err) {
                 console.error("Error updating API with status:", err);
