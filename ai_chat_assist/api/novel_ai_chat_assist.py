@@ -85,7 +85,7 @@ def update_feedback(session_id, ratings, feedback):
         session_detail = frappe.get_doc(SESSION_DETAILS, session_id)
         session_detail.ratings = ratings
         session_detail.feedback = feedback
-        session_detail.resolved = 1
+        # session_detail.resolved = 1 # Digital Marketing requested not to resolve it from guest side
         session_detail.save()
     else:
         return "error"
