@@ -46,7 +46,12 @@ const Login = () => {
         e.preventDefault();
 
         login({ username: credentials.email, password: credentials.password })
-            .then((res) => {
+            .then((response) => {
+                if (response.message === 'Password Reset') {
+                    window.location.href = response.redirect_to
+                    return;
+                }
+
                 notifySuccess('Logged in successfully!');
                 setTimeout(() => {
                     navigate('/dashboard');
