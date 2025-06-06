@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, IconButton, Button } from '@mui/material';
+import { Box, Typography, TextField, IconButton, Button, Card, CardContent } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useFrappeGetCall, useFrappeGetDoc, useFrappeUpdateDoc } from 'frappe-react-sdk';
 import { useSelector } from 'react-redux';
@@ -38,6 +38,8 @@ const Details = ({ setRefreshSessionList, setView, isDesktop }) => {
       setContact(data.contact_number || '');
     }
   }, [data]);
+
+  console.log(sessionID)
 
   /**
    * Handle changes in the input fields.
@@ -158,6 +160,20 @@ const Details = ({ setRefreshSessionList, setView, isDesktop }) => {
         >
           <CheckCircleIcon />
         </IconButton>
+      </Box>
+
+      {/* Referrer link */}
+      <Box>
+        <Card>
+          <CardContent>
+            <Typography variant='subtitle1'>
+              Client Referrer
+            </Typography>
+            <Typography variant="h6" component="div">
+              {data?.referrer ? data.referrer : "No referrer link found"}
+            </Typography>
+          </CardContent>
+        </Card>
       </Box>
     </Box>
   );
